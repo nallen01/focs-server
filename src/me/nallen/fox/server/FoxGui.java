@@ -2,6 +2,8 @@ package me.nallen.fox.server;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -16,6 +18,8 @@ public class FoxGui extends JFrame implements KeyListener {
 	public Dimension priorDimension = null;
 	public Point priorLocation = null;
 	
+	GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+	
 	public FoxGui() {
 		super("The Fox");
 		
@@ -23,6 +27,7 @@ public class FoxGui extends JFrame implements KeyListener {
 		setSize(1280, 720);
 		
 	    setVisible(true);
+	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
 		addKeyListener(this);
 	}
@@ -35,20 +40,26 @@ public class FoxGui extends JFrame implements KeyListener {
 			setUndecorated(false);
 			setSize(priorDimension);
 			setLocation(priorLocation);
+			
+			isFullScreen = false;
+			setVisible(true);
 		}
 		else {
-			priorDimension = getSize();
-			priorLocation = getLocation();
-			
-			dispose();
-			
-			setExtendedState(JFrame.MAXIMIZED_BOTH);
-			setUndecorated(true);
+			if (gd.isFullScreenSupported()) {
+				priorDimension = getSize();
+				priorLocation = getLocation();
+				
+				dispose();
+				
+				setExtendedState(JFrame.MAXIMIZED_BOTH);
+				setUndecorated(true);
+	
+		        gd.setFullScreenWindow(this);
+				
+				isFullScreen = true;
+				setVisible(true);
+			}
 		}
-		
-		isFullScreen = !isFullScreen;
-		
-		setVisible(true);
 	}
 
 	public void keyPressed(KeyEvent e) {
