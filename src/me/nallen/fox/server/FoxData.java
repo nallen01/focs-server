@@ -1,6 +1,8 @@
 package me.nallen.fox.server;
 
 public class FoxData {
+	public static final int NUM_HISTORY_POINTS = 201;
+	
 	public int redHighBalls;
 	public int redLowBalls;
 	public boolean redAuton;
@@ -10,8 +12,11 @@ public class FoxData {
 	public int blueLowBalls;
 	public boolean blueAuton;
 	public ElevatedState blueElevation;
-	
-	public boolean show;
+
+	public int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
+	public int redScoreHistoryPos = 0;
+	public int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
+	public int blueScoreHistoryPos = 0;
 	
 	public enum ElevatedState {
 	    NONE, LOW, HIGH
@@ -35,7 +40,22 @@ public class FoxData {
 		return score;
 	}
 	
-	public boolean getShow() {
-		return show;
+	public void clear() {
+		redHighBalls = 0;
+		redLowBalls = 0;
+		redAuton = false;
+		redElevation = ElevatedState.NONE;
+		
+		blueHighBalls = 0;
+		blueLowBalls = 0;
+		blueAuton = false;
+		blueElevation = ElevatedState.NONE;
+		
+		for(int i=0; i<NUM_HISTORY_POINTS; i++) {
+			redScoreHistory[i] = -1;
+			blueScoreHistory[i] = -1;
+		}
+		redScoreHistoryPos = 0;
+		blueScoreHistoryPos = 0;
 	}
 }

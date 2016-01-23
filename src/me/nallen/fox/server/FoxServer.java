@@ -13,6 +13,9 @@ public class FoxServer {
 	}
 	
 	public void init() {
+		foxData = new FoxData();
+		foxData.clear();
+		
 		// Start the TCP Server
 		
 		// Start the GUI

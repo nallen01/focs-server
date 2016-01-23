@@ -20,7 +20,7 @@ public class FoxGui extends JFrame implements KeyListener {
 		super("The Fox");
 		
 		getContentPane().setBackground(chromaColor);
-		setSize(640, 480);
+		setSize(1280, 720);
 		
 	    setVisible(true);
 	    
