@@ -1,7 +1,9 @@
 package me.nallen.fox.server;
 
+import java.util.Arrays;
+
 public class FoxData {
-	public static final int NUM_HISTORY_POINTS = 201;
+	public static final int NUM_HISTORY_POINTS = 200;
 	
 	public int redHighBalls;
 	public int redLowBalls;
@@ -14,9 +16,8 @@ public class FoxData {
 	public ElevatedState blueElevation;
 
 	public int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
-	public int redScoreHistoryPos = 0;
 	public int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
-	public int blueScoreHistoryPos = 0;
+	public int scoreHistoryPos = 0;
 	
 	public boolean showHistory = true;
 	public boolean largeHistory = false;
@@ -43,6 +44,37 @@ public class FoxData {
 		return score;
 	}
 	
+	public int[] getRedScoreHistory() {
+		int[] returnArray = new int[NUM_HISTORY_POINTS];
+		
+		int[] arrayOne = Arrays.copyOfRange(redScoreHistory, scoreHistoryPos, redScoreHistory.length);
+		int[] arrayTwo = Arrays.copyOfRange(redScoreHistory, 0, scoreHistoryPos);
+		
+		System.arraycopy(arrayOne, 0, returnArray, 0, arrayOne.length);
+		System.arraycopy(arrayTwo, 0, returnArray, arrayOne.length, arrayTwo.length);
+		
+		return returnArray;
+	}
+	
+	public int[] getBlueScoreHistory() {
+		int[] returnArray = new int[NUM_HISTORY_POINTS];
+		
+		int[] arrayOne = Arrays.copyOfRange(blueScoreHistory, scoreHistoryPos, blueScoreHistory.length);
+		int[] arrayTwo = Arrays.copyOfRange(blueScoreHistory, 0, scoreHistoryPos);
+		
+		System.arraycopy(arrayOne, 0, returnArray, 0, arrayOne.length);
+		System.arraycopy(arrayTwo, 0, returnArray, arrayOne.length, arrayTwo.length);
+		
+		return returnArray;
+	}
+	
+	public void doTick() {
+		redScoreHistory[scoreHistoryPos] = getRedScore();
+		blueScoreHistory[scoreHistoryPos] = getBlueScore();
+		
+		scoreHistoryPos = (scoreHistoryPos + 1) % NUM_HISTORY_POINTS;
+	}
+	
 	public void clear() {
 		redHighBalls = 0;
 		redLowBalls = 0;
@@ -58,7 +90,6 @@ public class FoxData {
 			redScoreHistory[i] = -1;
 			blueScoreHistory[i] = -1;
 		}
-		redScoreHistoryPos = 0;
-		blueScoreHistoryPos = 0;
+		scoreHistoryPos = 0;
 	}
 }
