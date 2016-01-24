@@ -1,6 +1,9 @@
 package me.nallen.fox.server;
 
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class FoxData {
 	public static final int NUM_HISTORY_POINTS = 200;
@@ -19,11 +22,23 @@ public class FoxData {
 	public int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
 	public int scoreHistoryPos = 0;
 	
+	public boolean isPaused = false;
+	
 	public boolean showHistory = true;
 	public boolean largeHistory = false;
 	
 	public enum ElevatedState {
 	    NONE, LOW, HIGH
+	}
+	
+	public FoxData() {
+		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+
+		ses.scheduleAtFixedRate(new Runnable() {
+		    public void run() {
+		    	doTick();
+		    }
+		}, 0, 1, TimeUnit.SECONDS);
 	}
 	
 	public int getRedScore() {
@@ -69,10 +84,12 @@ public class FoxData {
 	}
 	
 	public void doTick() {
-		redScoreHistory[scoreHistoryPos] = getRedScore();
-		blueScoreHistory[scoreHistoryPos] = getBlueScore();
-		
-		scoreHistoryPos = (scoreHistoryPos + 1) % NUM_HISTORY_POINTS;
+		if(!isPaused) {
+			redScoreHistory[scoreHistoryPos] = getRedScore();
+			blueScoreHistory[scoreHistoryPos] = getBlueScore();
+			
+			scoreHistoryPos = (scoreHistoryPos + 1) % NUM_HISTORY_POINTS;
+		}
 	}
 	
 	public void clear() {

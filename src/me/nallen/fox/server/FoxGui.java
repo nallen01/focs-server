@@ -151,7 +151,6 @@ public class FoxGui extends JFrame implements KeyListener {
 	    
 		addKeyListener(this);
 		addComponentListener(new ComponentListener() {
-
 			public void componentHidden(ComponentEvent arg0) {}
 
 			public void componentMoved(ComponentEvent arg0) {}
