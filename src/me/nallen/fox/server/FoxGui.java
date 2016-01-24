@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
@@ -16,32 +15,30 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 
 public class FoxGui extends JFrame implements KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static final Color chromaColor = new Color(0, 255, 0);
 	
 	private static final double SCORE_BOX_WIDTH = 0.08;
-	private static final double SCORE_BOX_HEIGHT = 0.1;
-	private static final double SCORE_BOX_CENTER_GAP = 0.1;
-	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.12;
+	private static final double SCORE_BOX_HEIGHT = 0.07;
+	private static final double SCORE_BOX_CENTER_GAP = 0.1125;
+	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.115;
 	private static final double SCORE_BOX_X_CURVE = 0.4;
-	private static final double SCORE_BOX_Y_CURVE = 0.4;
+	private static final double SCORE_BOX_Y_CURVE = 0.7;
 	
 	private static final double TOP_BOX_WIDTH = 0.15;
 	private static final double TOP_BOX_HEIGHT = 0.1;
-	private static final double TOP_BOX_TOP_OFFSET = 0.05;
-	private static final double TOP_BOX_SIDE_OFFSET = 0.15;
+	private static final double TOP_BOX_TOP_OFFSET = 0.047;
+	private static final double TOP_BOX_SIDE_OFFSET = 0.1516;
 	private static final double TOP_BOX_X_CURVE = 0.10;
 	private static final double TOP_BOX_Y_CURVE = 0.20;
-	private static final double TOP_BOX_SIDE_GAP = 0.05;
-	private static final double TOP_BOX_BOTTOM_GAP = 0.04;
+	private static final double TOP_BOX_SIDE_GAP = 0.0625;
+	private static final double TOP_BOX_BOTTOM_GAP = 0.028;
 	
 	public boolean isFullScreen = false;
 	public Dimension priorDimension = null;
