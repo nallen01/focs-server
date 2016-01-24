@@ -6,7 +6,7 @@ public class FoxData {
 	public int redHighBalls;
 	public int redLowBalls;
 	public boolean redAuton;
-	public ElevatedState redElevation; 
+	public ElevatedState redElevation;
 	
 	public int blueHighBalls;
 	public int blueLowBalls;
@@ -17,6 +17,9 @@ public class FoxData {
 	public int redScoreHistoryPos = 0;
 	public int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
 	public int blueScoreHistoryPos = 0;
+	
+	public boolean showHistory = true;
+	public boolean largeHistory = false;
 	
 	public enum ElevatedState {
 	    NONE, LOW, HIGH
