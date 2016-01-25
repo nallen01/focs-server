@@ -1,31 +1,37 @@
 package me.nallen.fox.server;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import me.nallen.fox.server.DataListener.UpdateType;
+
 public class FoxData {
 	public static final int NUM_HISTORY_POINTS = 200;
 	
-	public int redHighBalls;
-	public int redLowBalls;
-	public boolean redAuton;
-	public ElevatedState redElevation;
+	private int redHighBalls;
+	private int redLowBalls;
+	private boolean redAuton;
+	private ElevatedState redElevation;
 	
-	public int blueHighBalls;
-	public int blueLowBalls;
-	public boolean blueAuton;
-	public ElevatedState blueElevation;
+	private int blueHighBalls;
+	private int blueLowBalls;
+	private boolean blueAuton;
+	private ElevatedState blueElevation;
 
-	public int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
-	public int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
-	public int scoreHistoryPos = 0;
+	private int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
+	private int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
+	private int scoreHistoryPos = 0;
 	
-	public boolean isPaused = false;
+	private boolean isPaused = false;
 	
-	public boolean showHistory = true;
-	public boolean largeHistory = false;
+	private boolean showHistory = true;
+	private boolean largeHistory = false;
+
+	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
 	public enum ElevatedState {
 	    NONE, LOW, HIGH
@@ -39,6 +45,27 @@ public class FoxData {
 		    	doTick();
 		    }
 		}, 0, 1, TimeUnit.SECONDS);
+	}
+	
+	public boolean getLargeHistory() {
+		return largeHistory;
+	}
+	
+	public boolean getShowHistory() {
+		return showHistory;
+	}
+	
+	public synchronized void addListener(DataListener listener)  {
+		_listeners.add(listener);
+	}
+	public synchronized void removeListener(DataListener listener)   {
+		_listeners.remove(listener);
+	}
+	private synchronized void fireUpdate(UpdateType type) {
+		Iterator<DataListener> i = _listeners.iterator();
+		while(i.hasNext())  {
+			((DataListener) i.next()).update(type);
+		}
 	}
 	
 	public int getRedScore() {
@@ -89,6 +116,8 @@ public class FoxData {
 			blueScoreHistory[scoreHistoryPos] = getBlueScore();
 			
 			scoreHistoryPos = (scoreHistoryPos + 1) % NUM_HISTORY_POINTS;
+			
+			fireUpdate(UpdateType.TICK);
 		}
 	}
 	

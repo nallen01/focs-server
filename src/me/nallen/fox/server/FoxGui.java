@@ -2,6 +2,7 @@ package me.nallen.fox.server;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
@@ -20,9 +21,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class FoxGui extends JFrame implements KeyListener {
+public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
 	private static final Color chromaColor = new Color(0, 255, 0);
+	private static final Color redColor = new Color(255, 0, 0);
+	private static final Color blueColor = new Color(0, 0, 255);
 	
 	private static final double SCORE_BOX_WIDTH = 0.08;
 	private static final double SCORE_BOX_HEIGHT = 0.07;
@@ -30,6 +33,7 @@ public class FoxGui extends JFrame implements KeyListener {
 	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.115;
 	private static final double SCORE_BOX_X_CURVE = 0.4;
 	private static final double SCORE_BOX_Y_CURVE = 0.7;
+	private static final double SCORE_BOX_FONT = 0.3;
 	
 	private static final double TOP_BOX_WIDTH = 0.15;
 	private static final double TOP_BOX_HEIGHT = 0.1;
@@ -86,8 +90,9 @@ public class FoxGui extends JFrame implements KeyListener {
 	    redScorePanel.setOpaque(false);
 	    redScorePanel.setLayout(null);
 	    
-	    redScore = new JLabel("-");
+	    redScore = new JLabel("0");
 	    redScore.setHorizontalAlignment(SwingConstants.CENTER);
+	    redScore.setForeground(redColor);
 	    
 	    redScorePanel.add(redScore);
 	    add(redScorePanel);
@@ -113,8 +118,9 @@ public class FoxGui extends JFrame implements KeyListener {
 	    blueScorePanel.setOpaque(false);
 	    blueScorePanel.setLayout(null);
 	    
-	    blueScore = new JLabel("-");
+	    blueScore = new JLabel("0");
 	    blueScore.setHorizontalAlignment(SwingConstants.CENTER);
+	    blueScore.setForeground(blueColor);
 	    
 	    blueScorePanel.add(blueScore);
 	    add(blueScorePanel);
@@ -126,7 +132,7 @@ public class FoxGui extends JFrame implements KeyListener {
 	        protected void paintComponent(Graphics g) {
 	           super.paintComponent(g);
 	           
-	           if(!FoxServer.foxData.largeHistory) {
+	           if(!FoxServer.foxData.getLargeHistory()) {
 	        	   int width = getWidth();
 		           int height = getHeight();
 		           Graphics2D graphics = (Graphics2D) g;
@@ -164,6 +170,30 @@ public class FoxGui extends JFrame implements KeyListener {
 		
 		pack();
 	    updatePositions();
+	    updateScores();
+	    
+	    FoxServer.foxData.addListener(this);
+	}
+	
+	public void updateScores() {
+		redScore.setText("" + FoxServer.foxData.getRedScore());
+		blueScore.setText("" + FoxServer.foxData.getRedScore());
+	}
+	
+	public void updateGraph() {
+		
+	}
+
+	public void update(UpdateType type) {
+		if(type == UpdateType.TICK) {
+			updateGraph();
+		}
+		else if(type == UpdateType.SCORE) {
+			updateScores();
+		}
+		else if(type == UpdateType.SETTING) {
+			updatePositions();
+		}
 	}
 	
 	private void updatePositions() {
@@ -177,16 +207,24 @@ public class FoxGui extends JFrame implements KeyListener {
 		
 	    redScorePanel.setBounds((width / 2) - panel_x_offset - panel_width, panel_y, panel_width, panel_height);
 	    redScore.setBounds(0, 0, redScorePanel.getWidth(), redScorePanel.getHeight());
+	    redScore.setFont(new Font(redScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*redScorePanel.getWidth())));
 
 	    blueScorePanel.setBounds((width / 2) + panel_x_offset, panel_y, panel_width, panel_height);
 	    blueScore.setBounds(0, 0, blueScorePanel.getWidth(), blueScorePanel.getHeight());
-	    
-	    int top_box_width = (int) (TOP_BOX_WIDTH * width);
-	    int top_box_height = (int) (TOP_BOX_HEIGHT * height);
-	    int top_box_x = (int) (TOP_BOX_SIDE_OFFSET * width);
-	    int top_box_y = (int) (TOP_BOX_TOP_OFFSET * height);
-	    
-	    historyPanel.setBounds(top_box_x, top_box_y, top_box_width, top_box_height);
+	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
+ 
+	    if(FoxServer.foxData.getShowHistory()) {
+		    int top_box_width = (int) (TOP_BOX_WIDTH * width);
+		    int top_box_height = (int) (TOP_BOX_HEIGHT * height);
+		    int top_box_x = (int) (TOP_BOX_SIDE_OFFSET * width);
+		    int top_box_y = (int) (TOP_BOX_TOP_OFFSET * height);
+		    
+		    historyPanel.setBounds(top_box_x, top_box_y, top_box_width, top_box_height);
+		    historyPanel.setVisible(true);
+	    }
+	    else {
+		    historyPanel.setVisible(false);
+	    }
 	}
 	
 	public void toggleFullScreen() {
