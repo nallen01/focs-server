@@ -37,6 +37,16 @@ public class FoxData {
 	    NONE, LOW, HIGH
 	}
 	
+	public enum ScorerLocation {
+		RED_GOAL(0),
+		BLUE_GOAL(1),
+		COMMENTATOR(2);
+		
+		private final int id;
+		ScorerLocation(int id) { this.id = id; }
+		public int getValue() { return id; }
+	}
+	
 	public FoxData() {
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 
