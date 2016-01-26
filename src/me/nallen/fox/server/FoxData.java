@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import me.nallen.fox.server.DataListener.UpdateType;
 
 public class FoxData {
-	public static final int NUM_HISTORY_POINTS = 200;
+	public static final int NUM_HISTORY_POINTS = 31;
 	
 	private int redHighBalls;
 	private int redLowBalls;
@@ -29,7 +29,7 @@ public class FoxData {
 	private boolean isPaused = false;
 	
 	private boolean showHistory = true;
-	private boolean largeHistory = false;
+	private boolean largeHistory = true;
 
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
@@ -92,8 +92,14 @@ public class FoxData {
 		int[] arrayOne = Arrays.copyOfRange(redScoreHistory, scoreHistoryPos, redScoreHistory.length);
 		int[] arrayTwo = Arrays.copyOfRange(redScoreHistory, 0, scoreHistoryPos);
 		
-		System.arraycopy(arrayOne, 0, returnArray, 0, arrayOne.length);
-		System.arraycopy(arrayTwo, 0, returnArray, arrayOne.length, arrayTwo.length);
+		if(redScoreHistory[scoreHistoryPos] > -1) {
+			System.arraycopy(arrayOne, 0, returnArray, 0, arrayOne.length);
+			System.arraycopy(arrayTwo, 0, returnArray, arrayOne.length, arrayTwo.length);
+		}
+		else {
+			System.arraycopy(arrayTwo, 0, returnArray, 0, arrayTwo.length);
+			System.arraycopy(arrayOne, 0, returnArray, arrayTwo.length, arrayOne.length);
+		}
 		
 		return returnArray;
 	}
@@ -103,9 +109,15 @@ public class FoxData {
 		
 		int[] arrayOne = Arrays.copyOfRange(blueScoreHistory, scoreHistoryPos, blueScoreHistory.length);
 		int[] arrayTwo = Arrays.copyOfRange(blueScoreHistory, 0, scoreHistoryPos);
-		
-		System.arraycopy(arrayOne, 0, returnArray, 0, arrayOne.length);
-		System.arraycopy(arrayTwo, 0, returnArray, arrayOne.length, arrayTwo.length);
+
+		if(blueScoreHistory[scoreHistoryPos] > -1) {
+			System.arraycopy(arrayOne, 0, returnArray, 0, arrayOne.length);
+			System.arraycopy(arrayTwo, 0, returnArray, arrayOne.length, arrayTwo.length);
+		}
+		else {
+			System.arraycopy(arrayTwo, 0, returnArray, 0, arrayTwo.length);
+			System.arraycopy(arrayOne, 0, returnArray, arrayTwo.length, arrayOne.length);
+		}
 		
 		return returnArray;
 	}

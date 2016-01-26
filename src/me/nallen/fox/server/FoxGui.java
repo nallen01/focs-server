@@ -44,6 +44,13 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double TOP_BOX_SIDE_GAP = 0.0625;
 	private static final double TOP_BOX_BOTTOM_GAP = 0.028;
 	
+	private static final double MAIN_BOX_WIDTH = 0.7;
+	private static final double MAIN_BOX_HEIGHT = 0.55;
+	private static final double MAIN_BOX_TOP_OFFSET = 0.2;
+	private static final double MAIN_BOX_SIDE_OFFSET = 0.15;
+	
+	private static final int GRAPH_MAX_Y_VALUE = 400;
+	
 	public boolean isFullScreen = false;
 	public Dimension priorDimension = null;
 	public Point priorLocation = null;
@@ -57,6 +64,8 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private JLabel blueScore;
 	
 	private JPanel historyPanel;
+	private JPanel redHistoryPanel;
+	private JPanel blueHistoryPanel;
 	
 	public FoxGui() {
 		super("The Fox");
@@ -152,6 +161,33 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	        }
 	    };
 	    historyPanel.setOpaque(false);
+	    historyPanel.setLayout(null);
+	    
+	    redHistoryPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+	    	protected void paintComponent(Graphics g) {
+	    		super.paintComponent(g);
+	    		
+	    		paintGraph(this, (Graphics2D) g, redColor, FoxServer.foxData.getRedScoreHistory());
+	    	}
+	    };
+	    redHistoryPanel.setOpaque(false);
+	    historyPanel.add(redHistoryPanel);
+	    
+	    blueHistoryPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+	    	protected void paintComponent(Graphics g) {
+	    		super.paintComponent(g);
+	    		
+	    		paintGraph(this, (Graphics2D) g, blueColor, FoxServer.foxData.getBlueScoreHistory());
+	    	}
+	    };
+	    blueHistoryPanel.setOpaque(false);
+	    historyPanel.add(blueHistoryPanel);
 	    
 	    add(historyPanel);
 	    
@@ -175,18 +211,46 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    FoxServer.foxData.addListener(this);
 	}
 	
+	private void paintGraph(JPanel p, Graphics2D g, Color c, int[] points) {
+		int width = p.getWidth();
+		int height = p.getHeight() - 1;
+		
+		if(!FoxServer.foxData.getLargeHistory()) {
+			width = (int) (width * (1 - TOP_BOX_SIDE_GAP));
+			height = (int) (height * (1 - TOP_BOX_BOTTOM_GAP));
+		}
+		
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(c);
+		
+		double pixels_per_y = ((double) height) / GRAPH_MAX_Y_VALUE;
+		double pixels_per_x = ((double) width) / (FoxData.NUM_HISTORY_POINTS - 1);
+		
+		for(int i=1; i<points.length; i++) {
+			if(points[i] >= 0) {
+				int start_x = (int) (pixels_per_x * (i-1));
+				int start_y = height - (int) (pixels_per_y * points[i-1]);
+				int end_x = (int) (pixels_per_x * i);
+				int end_y = height - (int) (pixels_per_y * points[i]);
+				
+				g.drawLine(start_x, start_y, end_x, end_y);
+			}
+		}
+	}
+	
 	public void updateScores() {
 		redScore.setText("" + FoxServer.foxData.getRedScore());
 		blueScore.setText("" + FoxServer.foxData.getRedScore());
 	}
 	
-	public void updateGraph() {
-		
+	public void updateGraphs() {
+		redHistoryPanel.repaint();
+		blueHistoryPanel.repaint();
 	}
 
 	public void update(UpdateType type) {
 		if(type == UpdateType.TICK) {
-			updateGraph();
+			updateGraphs();
 		}
 		else if(type == UpdateType.SCORE) {
 			updateScores();
@@ -214,17 +278,31 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
  
 	    if(FoxServer.foxData.getShowHistory()) {
-		    int top_box_width = (int) (TOP_BOX_WIDTH * width);
-		    int top_box_height = (int) (TOP_BOX_HEIGHT * height);
-		    int top_box_x = (int) (TOP_BOX_SIDE_OFFSET * width);
-		    int top_box_y = (int) (TOP_BOX_TOP_OFFSET * height);
-		    
-		    historyPanel.setBounds(top_box_x, top_box_y, top_box_width, top_box_height);
+	    	if(FoxServer.foxData.getLargeHistory()) {
+			    int middle_box_width = (int) (MAIN_BOX_WIDTH * width);
+			    int middle_box_height = (int) (MAIN_BOX_HEIGHT * height);
+			    int middle_box_x = (int) (MAIN_BOX_SIDE_OFFSET * width);
+			    int middle_box_y = (int) (MAIN_BOX_TOP_OFFSET * height);
+			    
+			    historyPanel.setBounds(middle_box_x, middle_box_y, middle_box_width, middle_box_height);
+	    	}
+	    	else {
+			    int top_box_width = (int) (TOP_BOX_WIDTH * width);
+			    int top_box_height = (int) (TOP_BOX_HEIGHT * height);
+			    int top_box_x = (int) (TOP_BOX_SIDE_OFFSET * width);
+			    int top_box_y = (int) (TOP_BOX_TOP_OFFSET * height);
+			    
+			    historyPanel.setBounds(top_box_x, top_box_y, top_box_width, top_box_height);
+	    	}
+	    	
 		    historyPanel.setVisible(true);
 	    }
 	    else {
 		    historyPanel.setVisible(false);
 	    }
+	    
+	    redHistoryPanel.setBounds(0, 0, historyPanel.getWidth(), historyPanel.getHeight());
+	    blueHistoryPanel.setBounds(0, 0, historyPanel.getWidth(), historyPanel.getHeight());
 	}
 	
 	public void toggleFullScreen() {
