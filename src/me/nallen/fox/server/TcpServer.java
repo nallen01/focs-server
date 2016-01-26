@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 public class TcpServer {
-	public static int DEFAULT_PORT = 5006;
+	public static int DEFAULT_PORT = 5005;
 	
 	private ServerSocket serverSocket = null;
 	

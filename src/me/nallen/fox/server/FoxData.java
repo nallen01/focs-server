@@ -34,17 +34,21 @@ public class FoxData {
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
 	public enum ElevatedState {
-	    NONE, LOW, HIGH
-	}
-	
-	public enum ScorerLocation {
-		RED_GOAL(0),
-		BLUE_GOAL(1),
-		COMMENTATOR(2);
+	    NONE(0),
+	    LOW(1),
+	    HIGH(2);
 		
 		private final int id;
-		ScorerLocation(int id) { this.id = id; }
+		ElevatedState(int id) { this.id = id; }
 		public int getValue() { return id; }
+		public static ElevatedState fromInt(int id) {
+			ElevatedState[] values = ElevatedState.values();
+            for(int i=0; i<values.length; i++) {
+                if(values[i].getValue() == id)
+                    return values[i];
+            }
+            return null;
+		}
 	}
 	
 	public FoxData() {
@@ -76,6 +80,81 @@ public class FoxData {
 		while(i.hasNext())  {
 			((DataListener) i.next()).update(type);
 		}
+	}
+	
+	public int getRedHighBalls() {
+		return this.redHighBalls;
+	}
+	public void setRedHighBalls(int num) {
+		this.redHighBalls = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getRedLowBalls() {
+		return this.redLowBalls;
+	}
+	public void setRedLowBalls(int num) {
+		this.redLowBalls = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public void setRedElevation(ElevatedState state) {
+		this.redElevation = state;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public void setRedAuton(boolean auton) {
+		this.redAuton = auton;
+		
+		if(this.redAuton)
+			this.blueAuton = false;
+
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getBlueHighBalls() {
+		return this.blueHighBalls;
+	}
+	public void setBlueHighBalls(int num) {
+		this.blueHighBalls = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getBlueLowBalls() {
+		return this.blueLowBalls;
+	}
+	public void setBlueLowBalls(int num) {
+		this.blueLowBalls = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public void setBlueElevation(ElevatedState state) {
+		this.blueElevation = state;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public void setBlueAuton(boolean auton) {
+		this.blueAuton = auton;
+		
+		if(this.blueAuton)
+			this.redAuton = false;
+		
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public void setPaused(boolean paused) {
+		this.isPaused = paused;
+		fireUpdate(UpdateType.SETTING);
+	}
+	
+	public void setShowHistory(boolean show) {
+		this.showHistory = show;
+		fireUpdate(UpdateType.SETTING);
+	}
+	
+	public void setLargeHistory(boolean large) {
+		this.largeHistory = large;
+		fireUpdate(UpdateType.SETTING);
 	}
 	
 	public int getRedScore() {
