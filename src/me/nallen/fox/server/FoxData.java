@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import me.nallen.fox.server.DataListener.UpdateType;
 
 public class FoxData {
-	public static final int NUM_HISTORY_POINTS = 31;
+	public static final int NUM_HISTORY_POINTS = 181;
 	
 	private int redHighBalls;
 	private int redLowBalls;

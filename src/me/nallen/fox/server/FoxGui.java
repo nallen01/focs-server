@@ -240,7 +240,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	public void updateScores() {
 		redScore.setText("" + FoxServer.foxData.getRedScore());
-		blueScore.setText("" + FoxServer.foxData.getRedScore());
+		blueScore.setText("" + FoxServer.foxData.getBlueScore());
 	}
 	
 	public void updateGraphs() {
