@@ -238,5 +238,8 @@ public class FoxData {
 			blueScoreHistory[i] = -1;
 		}
 		scoreHistoryPos = 0;
+		
+		fireUpdate(UpdateType.TICK);
+		fireUpdate(UpdateType.SCORE);
 	}
 }

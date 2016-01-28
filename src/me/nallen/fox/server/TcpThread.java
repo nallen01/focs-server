@@ -31,7 +31,9 @@ public class TcpThread extends Thread {
     	
     	PAUSED(12),
     	HISTORY(13),
-    	LARGE_HISTORY(14);
+    	LARGE_HISTORY(14),
+    	
+    	CLEAR(15);
 		
 		private final int id;
 		ScoreField(int id) { this.id = id; }
@@ -165,6 +167,9 @@ public class TcpThread extends Thread {
 		    					}
 		    					else if(field == ScoreField.LARGE_HISTORY) {
 	    							FoxServer.foxData.setLargeHistory(num > 0);
+		    					}
+		    					else if(field == ScoreField.CLEAR) {
+		    						FoxServer.foxData.clear();
 		    					}
 		    				}
 		    			}
