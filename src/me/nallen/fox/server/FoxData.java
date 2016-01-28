@@ -10,7 +10,10 @@ import java.util.concurrent.TimeUnit;
 import me.nallen.fox.server.DataListener.UpdateType;
 
 public class FoxData {
-	public static final int NUM_HISTORY_POINTS = 181;
+	public static final int HISTORY_SECONDS = 180;
+	public static final double HISTORY_FREQUENCY = 10;
+	public static final int NUM_HISTORY_POINTS = (int) (HISTORY_SECONDS * HISTORY_FREQUENCY) + 1;
+	public static final int HISTORY_MILLISECONDS = (int) (1000 / HISTORY_FREQUENCY);
 	
 	private int redHighBalls;
 	private int redLowBalls;
@@ -53,12 +56,12 @@ public class FoxData {
 	
 	public FoxData() {
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-
+		
 		ses.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	doTick();
 		    }
-		}, 0, 1, TimeUnit.SECONDS);
+		}, 0, HISTORY_MILLISECONDS, TimeUnit.MILLISECONDS);
 	}
 	
 	public boolean getLargeHistory() {
