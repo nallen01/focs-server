@@ -1,5 +1,6 @@
 package me.nallen.fox.server;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -50,6 +51,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_SIDE_OFFSET = 0.15;
 	
 	private static final int GRAPH_MAX_Y_VALUE = 400;
+	private static final double GRAPH_LINE_WIDTH = 0.006;
 	
 	public boolean isFullScreen = false;
 	public Dimension priorDimension = null;
@@ -222,6 +224,10 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(c);
+		float line_width = (float) (GRAPH_LINE_WIDTH * height);
+		if(line_width < 1)
+			line_width = 1;
+		g.setStroke(new BasicStroke(line_width));
 		
 		double pixels_per_y = ((double) height) / GRAPH_MAX_Y_VALUE;
 		double pixels_per_x = ((double) width) / (FoxData.NUM_HISTORY_POINTS - 1);
