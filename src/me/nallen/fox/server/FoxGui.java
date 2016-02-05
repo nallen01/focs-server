@@ -24,7 +24,7 @@ import javax.swing.SwingConstants;
 
 public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
-	private static final Color chromaColor = new Color(0, 255, 0);
+	private static final Color chromaColor = new Color(0, 204, 0);
 	private static final Color redColor = new Color(255, 0, 0);
 	private static final Color blueColor = new Color(0, 0, 255);
 	
