@@ -26,9 +26,12 @@ import javax.swing.SwingConstants;
 
 public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
-	private static final Color chromaColor = new Color(0, 204, 0);
+	private static final Color chromaColor = new Color(0, 255, 0);
 	private static final Color redColor = new Color(255, 0, 0);
 	private static final Color blueColor = new Color(0, 0, 255);
+	private static final Color whiteColor = new Color(255, 255, 255);
+	private static final Color grayColor = new Color(63, 63, 63);
+	private static final Color blackColor = new Color(0, 0, 0);
 	
 	private static final double SCORE_BOX_WIDTH = 0.08;
 	private static final double SCORE_BOX_HEIGHT = 0.07;
@@ -93,7 +96,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	           Graphics2D graphics = (Graphics2D) g;
 	           graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-	           graphics.setColor(Color.WHITE);
+	           graphics.setColor(whiteColor);
 
 	           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, SCORE_BOX_X_CURVE * width, SCORE_BOX_Y_CURVE * height));
 	           graphics.fill(new Rectangle2D.Double(SCORE_BOX_X_CURVE*width,0,width-SCORE_BOX_X_CURVE*width,height));
@@ -121,7 +124,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	           Graphics2D graphics = (Graphics2D) g;
 	           graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-	           graphics.setColor(Color.WHITE);
+	           graphics.setColor(whiteColor);
 
 	           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, SCORE_BOX_X_CURVE * width, SCORE_BOX_Y_CURVE * height));
 	           graphics.fill(new Rectangle2D.Double(0,0,width-SCORE_BOX_X_CURVE*width,height));
@@ -151,12 +154,12 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		           Graphics2D graphics = (Graphics2D) g;
 		           graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		           graphics.setColor(Color.GRAY);
+		           graphics.setColor(grayColor);
 
 		           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
 		           graphics.fill(new Rectangle2D.Double(0,0,width-TOP_BOX_X_CURVE*width,height));
 		           
-		           graphics.setColor(Color.BLACK);
+		           graphics.setColor(blackColor);
 
 		           graphics.fill(new RoundRectangle2D.Double(0, 0, width - TOP_BOX_SIDE_GAP * width, height - TOP_BOX_BOTTOM_GAP * height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
 		           graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_SIDE_GAP * width, height - TOP_BOX_Y_CURVE * height - TOP_BOX_BOTTOM_GAP * height));
