@@ -27,8 +27,8 @@ import javax.swing.SwingConstants;
 public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
 	private static final Color chromaColor = new Color(0, 255, 0);
-	private static final Color redColor = new Color(255, 0, 0);
-	private static final Color blueColor = new Color(0, 0, 255);
+	private static final Color redColor = new Color(238, 49, 36);
+	private static final Color blueColor = new Color(0, 130, 200);
 	private static final Color whiteColor = new Color(255, 255, 255);
 	private static final Color grayColor = new Color(63, 63, 63);
 	private static final Color blackColor = new Color(0, 0, 0);
@@ -36,7 +36,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double SCORE_BOX_WIDTH = 0.08;
 	private static final double SCORE_BOX_HEIGHT = 0.07;
 	private static final double SCORE_BOX_CENTER_GAP = 0.1125;
-	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.115;
+	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.114;
 	private static final double SCORE_BOX_X_CURVE = 0.4;
 	private static final double SCORE_BOX_Y_CURVE = 0.7;
 	private static final double SCORE_BOX_FONT = 0.3;
@@ -290,12 +290,13 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		int panel_height =  (int) (SCORE_BOX_HEIGHT * height);
 		int panel_y = height - (int) (SCORE_BOX_BOTTOM_OFFSET * height) - panel_height;
 		int panel_x_offset = (int) ((SCORE_BOX_CENTER_GAP / 2) * width);
+		int panel_x_center_offset = 1;
 		
-	    redScorePanel.setBounds((width / 2) - panel_x_offset - panel_width, panel_y, panel_width, panel_height);
+	    redScorePanel.setBounds((width / 2) - panel_x_offset - panel_width + panel_x_center_offset, panel_y, panel_width, panel_height);
 	    redScore.setBounds(0, 0, redScorePanel.getWidth(), redScorePanel.getHeight());
 	    redScore.setFont(new Font(redScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*redScorePanel.getWidth())));
 
-	    blueScorePanel.setBounds((width / 2) + panel_x_offset, panel_y, panel_width, panel_height);
+	    blueScorePanel.setBounds((width / 2) + panel_x_offset + panel_x_center_offset, panel_y, panel_width, panel_height);
 	    blueScore.setBounds(0, 0, blueScorePanel.getWidth(), blueScorePanel.getHeight());
 	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
  
