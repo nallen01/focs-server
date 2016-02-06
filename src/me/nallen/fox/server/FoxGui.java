@@ -206,6 +206,8 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			public void componentShown(ComponentEvent arg0) {}
 		});
 		
+		com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(this,true);
+		
 		pack();
 	    updatePositions();
 	    updateScores();
@@ -330,10 +332,13 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 				
 				dispose();
 				
-				setExtendedState(JFrame.MAXIMIZED_BOTH);
+				setBounds(0, 0, getToolkit().getScreenSize().width,
+                        getToolkit().getScreenSize().height);
 				setUndecorated(true);
+
+				toFront();
 	
-		        gd.setFullScreenWindow(this);
+		        //gd.setFullScreenWindow(this);
 				
 				isFullScreen = true;
 				setVisible(true);
