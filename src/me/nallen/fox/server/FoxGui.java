@@ -10,12 +10,14 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.lang.reflect.Method;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -206,7 +208,16 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			public void componentShown(ComponentEvent arg0) {}
 		});
 		
-		com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(this,true);
+		
+		if (System.getProperty("os.name").equals("Mac OS X"))
+		{
+			try {
+				Class<?> c = Class.forName("com.apple.eawt.FullScreenUtilities");
+				Method m = c.getMethod("setWindowCanFullScreen", Window.class, boolean.class);
+				m.invoke(c, this, true);
+			} catch (Exception e) { e.printStackTrace();}
+		}
+		
 		
 		pack();
 	    updatePositions();
