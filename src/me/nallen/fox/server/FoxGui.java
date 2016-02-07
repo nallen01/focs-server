@@ -33,13 +33,13 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final Color grayColor = new Color(63, 63, 63);
 	private static final Color blackColor = new Color(0, 0, 0);
 	
-	private static final double SCORE_BOX_WIDTH = 0.08;
+	private static final double SCORE_BOX_WIDTH = 0.057;
 	private static final double SCORE_BOX_HEIGHT = 0.07;
 	private static final double SCORE_BOX_CENTER_GAP = 0.1125;
 	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.114;
 	private static final double SCORE_BOX_X_CURVE = 0.4;
 	private static final double SCORE_BOX_Y_CURVE = 0.7;
-	private static final double SCORE_BOX_FONT = 0.3;
+	private static final double SCORE_BOX_FONT = 0.4;
 	
 	private static final double TOP_BOX_WIDTH = 0.15;
 	private static final double TOP_BOX_HEIGHT = 0.1;
