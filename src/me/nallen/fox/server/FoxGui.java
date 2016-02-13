@@ -314,13 +314,13 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    redScore.setBounds(0, 0, redScorePanel.getWidth(), redScorePanel.getHeight());
 	    redScore.setFont(new Font(redScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*redScorePanel.getWidth())));
 	    
-	    setDoubleBounds(redScoreGreyPanel, red_panel_x + panel_width, panel_y, grey_bar_width, panel_height);
+	    setDoubleBounds(redScoreGreyPanel, redScorePanel.getBounds().x + redScorePanel.getBounds().width, panel_y, grey_bar_width, panel_height);
 	    
 	    setDoubleBounds(blueScorePanel, blue_panel_x, panel_y, panel_width, panel_height);
 	    blueScore.setBounds(0, 0, blueScorePanel.getWidth(), blueScorePanel.getHeight());
 	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
 
-	    setDoubleBounds(blueScoreGreyPanel, blue_panel_x - grey_bar_width, panel_y, grey_bar_width, panel_height);
+	    setDoubleBounds(blueScoreGreyPanel, blueScorePanel.getBounds().x - grey_bar_width, panel_y, grey_bar_width, panel_height);
 	    
 	    if(FoxServer.foxData.getShowHistory()) {
 	    	if(FoxServer.foxData.getLargeHistory()) {
