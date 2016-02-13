@@ -19,6 +19,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.lang.reflect.Method;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,13 +31,15 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final Color redColor = new Color(238, 49, 36);
 	private static final Color blueColor = new Color(0, 130, 200);
 	private static final Color whiteColor = new Color(255, 255, 255);
-	private static final Color grayColor = new Color(63, 63, 63);
+	private static final Color grayColor = new Color(105, 105, 105);
 	private static final Color blackColor = new Color(0, 0, 0);
 	
-	private static final double SCORE_BOX_WIDTH = 0.057;
-	private static final double SCORE_BOX_HEIGHT = 0.07;
-	private static final double SCORE_BOX_CENTER_GAP = 0.1125;
-	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.114;
+	private static final double SCORE_BOX_WIDTH = 109.0 / 1920;
+	private static final double SCORE_BOX_HEIGHT = 77.0 / 1080;
+	private static final double RED_SCORE_BOX_X = 744.0 / 1920;
+	private static final double BLUE_SCORE_BOX_X = 1069.0 / 1920;
+	private static final double SCORE_BOX_BOTTOM_OFFSET = 123.0 / 1080;
+	private static final double SCORE_BOX_GREY_WIDTH = 5.0 / 1920;
 	private static final double SCORE_BOX_X_CURVE = 0.4;
 	private static final double SCORE_BOX_Y_CURVE = 0.7;
 	private static final double SCORE_BOX_FONT = 0.4;
@@ -66,9 +69,11 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	private JPanel redScorePanel;
 	private JLabel redScore;
+	private JPanel redScoreGreyPanel;
 
 	private JPanel blueScorePanel;
 	private JLabel blueScore;
+	private JPanel blueScoreGreyPanel;
 	
 	private JPanel historyPanel;
 	private JPanel redHistoryPanel;
@@ -113,6 +118,10 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    redScorePanel.add(redScore);
 	    add(redScorePanel);
 	    
+	    redScoreGreyPanel = new JPanel();
+	    redScoreGreyPanel.setBackground(grayColor);
+	    add(redScoreGreyPanel);
+	    
 	    blueScorePanel = new JPanel() {
 	    	private static final long serialVersionUID = 1L;
 
@@ -140,6 +149,10 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    
 	    blueScorePanel.add(blueScore);
 	    add(blueScorePanel);
+	    
+	    blueScoreGreyPanel = new JPanel();
+	    blueScoreGreyPanel.setBackground(grayColor);
+	    add(blueScoreGreyPanel);
 	    
 	    historyPanel = new JPanel() {
 	    	private static final long serialVersionUID = 1L;
@@ -282,24 +295,33 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		}
 	}
 	
+	private void setDoubleBounds(JComponent comp, double x, double y, double width, double height) {
+		comp.setBounds((int) Math.round(x), (int) Math.round(y), (int) Math.round(width), (int) Math.round(height));
+	}
+	
 	private void updatePositions() {
 		int width = getContentPane().getWidth();
 		int height = getContentPane().getHeight();
 		
-		int panel_width = (int) (SCORE_BOX_WIDTH * width);
-		int panel_height =  (int) (SCORE_BOX_HEIGHT * height);
-		int panel_y = height - (int) (SCORE_BOX_BOTTOM_OFFSET * height) - panel_height;
-		int panel_x_offset = (int) ((SCORE_BOX_CENTER_GAP / 2) * width);
-		int panel_x_center_offset = 1;
+		double panel_width = SCORE_BOX_WIDTH * width;
+		double panel_height =  SCORE_BOX_HEIGHT * height;
+		double panel_y = height - SCORE_BOX_BOTTOM_OFFSET * height - panel_height;
+		double red_panel_x = RED_SCORE_BOX_X * width;
+		double blue_panel_x = BLUE_SCORE_BOX_X * width;
+		double grey_bar_width = SCORE_BOX_GREY_WIDTH * width;
 		
-	    redScorePanel.setBounds((width / 2) - panel_x_offset - panel_width + panel_x_center_offset, panel_y, panel_width, panel_height);
+		setDoubleBounds(redScorePanel, red_panel_x, panel_y, panel_width, panel_height);
 	    redScore.setBounds(0, 0, redScorePanel.getWidth(), redScorePanel.getHeight());
 	    redScore.setFont(new Font(redScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*redScorePanel.getWidth())));
-
-	    blueScorePanel.setBounds((width / 2) + panel_x_offset + panel_x_center_offset, panel_y, panel_width, panel_height);
+	    
+	    setDoubleBounds(redScoreGreyPanel, red_panel_x + panel_width, panel_y, grey_bar_width, panel_height);
+	    
+	    setDoubleBounds(blueScorePanel, blue_panel_x, panel_y, panel_width, panel_height);
 	    blueScore.setBounds(0, 0, blueScorePanel.getWidth(), blueScorePanel.getHeight());
 	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
- 
+
+	    setDoubleBounds(blueScoreGreyPanel, blue_panel_x - grey_bar_width, panel_y, grey_bar_width, panel_height);
+	    
 	    if(FoxServer.foxData.getShowHistory()) {
 	    	if(FoxServer.foxData.getLargeHistory()) {
 			    int middle_box_width = (int) (MAIN_BOX_WIDTH * width);
