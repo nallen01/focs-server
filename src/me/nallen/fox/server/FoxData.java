@@ -15,13 +15,17 @@ public class FoxData {
 	public static final int NUM_HISTORY_POINTS = (int) (HISTORY_SECONDS * HISTORY_FREQUENCY) + 1;
 	public static final int HISTORY_MILLISECONDS = (int) (1000 / HISTORY_FREQUENCY);
 	
-	private int redHighBalls;
-	private int redLowBalls;
+	private int redFarStars;
+	private int redFarCubes;
+	private int redNearStars;
+	private int redNearCubes;
 	private boolean redAuton;
 	private ElevatedState redElevation;
 	
-	private int blueHighBalls;
-	private int blueLowBalls;
+	private int blueFarStars;
+	private int blueFarCubes;
+	private int blueNearStars;
+	private int blueNearCubes;
 	private boolean blueAuton;
 	private ElevatedState blueElevation;
 
@@ -85,19 +89,35 @@ public class FoxData {
 		}
 	}
 	
-	public int getRedHighBalls() {
-		return this.redHighBalls;
+	public int getRedFarStars() {
+		return this.redFarStars;
 	}
-	public void setRedHighBalls(int num) {
-		this.redHighBalls = num;
+	public void setRedFarStars(int num) {
+		this.redFarStars = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedLowBalls() {
-		return this.redLowBalls;
+	public int getRedFarCubes() {
+		return this.redFarCubes;
 	}
-	public void setRedLowBalls(int num) {
-		this.redLowBalls = num;
+	public void setRedFarCubes(int num) {
+		this.redFarCubes = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getRedNearStars() {
+		return this.redNearStars;
+	}
+	public void setRedNearStars(int num) {
+		this.redNearStars = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getRedNearCubes() {
+		return this.redNearCubes;
+	}
+	public void setRedNearCubes(int num) {
+		this.redNearCubes = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -115,19 +135,35 @@ public class FoxData {
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueHighBalls() {
-		return this.blueHighBalls;
+	public int getBlueFarStars() {
+		return this.blueFarStars;
 	}
-	public void setBlueHighBalls(int num) {
-		this.blueHighBalls = num;
+	public void setBlueFarStars(int num) {
+		this.blueFarStars = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueLowBalls() {
-		return this.blueLowBalls;
+	public int getBlueFarCubes() {
+		return this.blueFarCubes;
 	}
-	public void setBlueLowBalls(int num) {
-		this.blueLowBalls = num;
+	public void setBlueFarCubes(int num) {
+		this.blueFarCubes = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getBlueNearStars() {
+		return this.blueNearStars;
+	}
+	public void setBlueNearStars(int num) {
+		this.blueNearStars = num;
+		fireUpdate(UpdateType.SCORE);
+	}
+	
+	public int getBlueNearCubes() {
+		return this.blueNearCubes;
+	}
+	public void setBlueNearCubes(int num) {
+		this.blueNearCubes = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -162,19 +198,23 @@ public class FoxData {
 	
 	public int getRedScore() {
 		int score = 0;
-		score += redHighBalls * 5;
-		score += redLowBalls;
-		score += redAuton ? 10 : 0;
-		score += redElevation == ElevatedState.HIGH ? 50 : redElevation == ElevatedState.LOW ? 25 : 0;
+		score += redNearStars;
+		score += redNearCubes * 2;
+		score += redFarStars * 2;
+		score += redFarCubes * 4;
+		score += redAuton ? 4 : 0;
+		score += redElevation == ElevatedState.HIGH ? 12 : redElevation == ElevatedState.LOW ? 4 : 0;
 		return score;
 	}
 	
 	public int getBlueScore() {
 		int score = 0;
-		score += blueHighBalls * 5;
-		score += blueLowBalls;
-		score += blueAuton ? 10 : 0;
-		score += blueElevation == ElevatedState.HIGH ? 50 : blueElevation == ElevatedState.LOW ? 25 : 0;
+		score += blueNearStars;
+		score += blueNearCubes * 2;
+		score += blueFarStars * 2;
+		score += blueFarCubes * 4;
+		score += blueAuton ? 4 : 0;
+		score += blueElevation == ElevatedState.HIGH ? 12 : blueElevation == ElevatedState.LOW ? 4 : 0;
 		return score;
 	}
 	
@@ -226,13 +266,17 @@ public class FoxData {
 	}
 	
 	public void clear() {
-		redHighBalls = 0;
-		redLowBalls = 0;
+		redFarStars = 0;
+		redFarCubes = 0;
+		redNearStars = 0;
+		redNearCubes = 0;
 		redAuton = false;
 		redElevation = ElevatedState.NONE;
 		
-		blueHighBalls = 0;
-		blueLowBalls = 0;
+		blueFarStars = 0;
+		blueFarCubes = 0;
+		blueNearStars = 0;
+		blueNearCubes = 0;
 		blueAuton = false;
 		blueElevation = ElevatedState.NONE;
 		

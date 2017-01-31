@@ -15,17 +15,17 @@ public class TcpThread extends Thread {
     private BufferedWriter out = null;
     
     public enum ScoreField {
-		RED_HIGH_BALLS(0),
-		RED_LOW_BALLS(1),
-		RED_HIGH_BONUS_BALLS(2),
-		RED_LOW_BONUS_BALLS(3),
+		RED_FAR_STARS(0),
+		RED_FAR_CUBES(1),
+		RED_NEAR_STARS(2),
+		RED_NEAR_CUBES(3),
 		RED_ELEVATION(4),
 		RED_AUTON(10),
 		
-		BLUE_HIGH_BALLS(5),
-		BLUE_LOW_BALLS(6),
-		BLUE_HIGH_BONUS_BALLS(7),
-		BLUE_LOW_BONUS_BALLS(8),
+		BLUE_FAR_STARS(5),
+		BLUE_FAR_CUBES(6),
+		BLUE_NEAR_STARS(7),
+		BLUE_NEAR_CUBES(8),
 		BLUE_ELEVATION(9),
     	BLUE_AUTON(11),
     	
@@ -105,25 +105,45 @@ public class TcpThread extends Thread {
 		    					MessageType type = MessageType.fromInt(Integer.parseInt(parts[1]));
 		    					int num = Integer.parseInt(parts[2]);
 		    					
-		    					if(field == ScoreField.RED_HIGH_BALLS) {
+		    					if(field == ScoreField.RED_FAR_CUBES) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedHighBalls() + num;
+		    							num = FoxServer.foxData.getRedFarCubes() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedHighBalls() - num;
+		    							num = FoxServer.foxData.getRedFarCubes() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedHighBalls(num);
+	    							FoxServer.foxData.setRedFarCubes(num);
 		    					}
-		    					else if(field == ScoreField.RED_LOW_BALLS) {
+		    					else if(field == ScoreField.RED_FAR_STARS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedLowBalls() + num;
+		    							num = FoxServer.foxData.getRedFarStars() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedLowBalls() - num;
+		    							num = FoxServer.foxData.getRedFarStars() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedLowBalls(num);
+	    							FoxServer.foxData.setRedFarStars(num);
+		    					}
+		    					else if(field == ScoreField.RED_NEAR_CUBES) {
+		    						if(type == MessageType.ADD) {
+		    							num = FoxServer.foxData.getRedNearCubes() + num;
+		    						}
+		    						else if(type == MessageType.SUBTRACT) {
+		    							num = FoxServer.foxData.getRedNearCubes() - num;
+		    						}
+		    						
+	    							FoxServer.foxData.setRedNearCubes(num);
+		    					}
+		    					else if(field == ScoreField.RED_NEAR_STARS) {
+		    						if(type == MessageType.ADD) {
+		    							num = FoxServer.foxData.getRedNearStars() + num;
+		    						}
+		    						else if(type == MessageType.SUBTRACT) {
+		    							num = FoxServer.foxData.getRedNearStars() - num;
+		    						}
+		    						
+	    							FoxServer.foxData.setRedNearStars(num);
 		    					}
 		    					else if(field == ScoreField.RED_ELEVATION) {
 		    						ElevatedState state = ElevatedState.fromInt(num);
@@ -132,25 +152,45 @@ public class TcpThread extends Thread {
 		    					else if(field == ScoreField.RED_AUTON) {
 	    							FoxServer.foxData.setRedAuton(num > 0);
 		    					}
-		    					else if(field == ScoreField.BLUE_HIGH_BALLS) {
+		    					else if(field == ScoreField.BLUE_FAR_CUBES) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueHighBalls() + num;
+		    							num = FoxServer.foxData.getBlueFarCubes() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueHighBalls() - num;
+		    							num = FoxServer.foxData.getBlueFarCubes() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setBlueHighBalls(num);
+	    							FoxServer.foxData.setBlueFarCubes(num);
 		    					}
-		    					else if(field == ScoreField.BLUE_LOW_BALLS) {
+		    					else if(field == ScoreField.BLUE_FAR_STARS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueLowBalls() + num;
+		    							num = FoxServer.foxData.getBlueFarStars() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueLowBalls() - num;
+		    							num = FoxServer.foxData.getBlueFarStars() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setBlueLowBalls(num);
+	    							FoxServer.foxData.setBlueFarStars(num);
+		    					}
+		    					else if(field == ScoreField.BLUE_NEAR_CUBES) {
+		    						if(type == MessageType.ADD) {
+		    							num = FoxServer.foxData.getBlueNearCubes() + num;
+		    						}
+		    						else if(type == MessageType.SUBTRACT) {
+		    							num = FoxServer.foxData.getBlueNearCubes() - num;
+		    						}
+		    						
+	    							FoxServer.foxData.setBlueNearCubes(num);
+		    					}
+		    					else if(field == ScoreField.BLUE_NEAR_STARS) {
+		    						if(type == MessageType.ADD) {
+		    							num = FoxServer.foxData.getBlueNearStars() + num;
+		    						}
+		    						else if(type == MessageType.SUBTRACT) {
+		    							num = FoxServer.foxData.getBlueNearStars() - num;
+		    						}
+		    						
+	    							FoxServer.foxData.setBlueNearStars(num);
 		    					}
 		    					else if(field == ScoreField.BLUE_ELEVATION) {
 		    						ElevatedState state = ElevatedState.fromInt(num);
