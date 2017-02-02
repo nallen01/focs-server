@@ -9,7 +9,7 @@ import java.net.Socket;
 
 import me.nallen.fox.server.FoxData.ElevatedState;
 
-public class TcpThread extends Thread {
+public class TcpThread extends Thread implements DataListener {
     private Socket socket = null;
     private BufferedReader in = null;
     private BufferedWriter out = null;
@@ -91,6 +91,8 @@ public class TcpThread extends Thread {
 		    
 		    if(out != null) {
 		    	sendMessage("1");
+
+			    FoxServer.foxData.addListener(this);
 		    	
 		    	// Loop for messages from the client
 		    	while(true) {
@@ -233,6 +235,18 @@ public class TcpThread extends Thread {
 		
 		} catch (IOException e) {
 		    e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void update(UpdateType type) {
+		if(type == UpdateType.CLEAR) {
+			if (out != null) {
+	            try {
+	                out.write(ScoreField.CLEAR.getValue() + ((char)29) + MessageType.SET.getValue() + ((char)29) + "1\n");
+	                out.flush();
+	            } catch (Exception e) {}
+	        }
 		}
 	}
 }

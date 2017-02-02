@@ -286,6 +286,7 @@ public class FoxData {
 		}
 		scoreHistoryPos = 0;
 		
+		fireUpdate(UpdateType.CLEAR);
 		fireUpdate(UpdateType.TICK);
 		fireUpdate(UpdateType.SCORE);
 	}
