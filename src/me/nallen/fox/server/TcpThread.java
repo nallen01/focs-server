@@ -81,6 +81,10 @@ public class TcpThread extends Thread implements DataListener {
 		}
 		return false;
 	}
+
+    private boolean sendFoxCommand(ScoreField field, MessageType type, int value) {
+        return sendMessage("" + field.getValue() + ((char)29) + type.getValue() + ((char)29) + value);
+    }
 	
 	public void run() {
 		try {
@@ -91,6 +95,20 @@ public class TcpThread extends Thread implements DataListener {
 		    
 		    if(out != null) {
 		    	sendMessage("1");
+		    	
+		    	sendFoxCommand(ScoreField.RED_AUTON, MessageType.SET, FoxServer.foxData.getRedAuton() ? 1 : 0);
+		    	sendFoxCommand(ScoreField.RED_ELEVATION, MessageType.SET, FoxServer.foxData.getRedElevation().getValue());
+		    	sendFoxCommand(ScoreField.RED_FAR_CUBES, MessageType.SET, FoxServer.foxData.getRedFarCubes());
+		    	sendFoxCommand(ScoreField.RED_FAR_STARS, MessageType.SET, FoxServer.foxData.getRedFarStars());
+		    	sendFoxCommand(ScoreField.RED_NEAR_CUBES, MessageType.SET, FoxServer.foxData.getRedNearCubes());
+		    	sendFoxCommand(ScoreField.RED_NEAR_STARS, MessageType.SET, FoxServer.foxData.getRedNearStars());
+
+		    	sendFoxCommand(ScoreField.BLUE_AUTON, MessageType.SET, FoxServer.foxData.getBlueAuton() ? 1 : 0);
+		    	sendFoxCommand(ScoreField.BLUE_ELEVATION, MessageType.SET, FoxServer.foxData.getBlueElevation().getValue());
+		    	sendFoxCommand(ScoreField.BLUE_FAR_CUBES, MessageType.SET, FoxServer.foxData.getBlueFarCubes());
+		    	sendFoxCommand(ScoreField.BLUE_FAR_STARS, MessageType.SET, FoxServer.foxData.getBlueFarStars());
+		    	sendFoxCommand(ScoreField.BLUE_NEAR_CUBES, MessageType.SET, FoxServer.foxData.getBlueNearCubes());
+		    	sendFoxCommand(ScoreField.BLUE_NEAR_STARS, MessageType.SET, FoxServer.foxData.getBlueNearStars());
 
 			    FoxServer.foxData.addListener(this);
 		    	

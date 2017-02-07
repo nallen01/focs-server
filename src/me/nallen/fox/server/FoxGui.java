@@ -58,7 +58,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_TOP_OFFSET = 0.2;
 	private static final double MAIN_BOX_SIDE_OFFSET = 0.15;
 	
-	private static final int GRAPH_MAX_Y_VALUE = 400;
+	private static final int GRAPH_MAX_Y_VALUE = 80;
 	private static final double GRAPH_LINE_WIDTH = 0.006;
 	
 	public boolean isFullScreen = false;

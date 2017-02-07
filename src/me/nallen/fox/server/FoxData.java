@@ -15,19 +15,19 @@ public class FoxData {
 	public static final int NUM_HISTORY_POINTS = (int) (HISTORY_SECONDS * HISTORY_FREQUENCY) + 1;
 	public static final int HISTORY_MILLISECONDS = (int) (1000 / HISTORY_FREQUENCY);
 	
-	private int redFarStars;
-	private int redFarCubes;
-	private int redNearStars;
-	private int redNearCubes;
-	private boolean redAuton;
-	private ElevatedState redElevation;
+	private int redFarStars = 7;
+	private int redFarCubes = 1;
+	private int redNearStars = 0;
+	private int redNearCubes = 0;
+	private boolean redAuton = false;
+	private ElevatedState redElevation = ElevatedState.NONE;
 	
-	private int blueFarStars;
-	private int blueFarCubes;
-	private int blueNearStars;
-	private int blueNearCubes;
-	private boolean blueAuton;
-	private ElevatedState blueElevation;
+	private int blueFarStars = 7;
+	private int blueFarCubes = 1;
+	private int blueNearStars = 0;
+	private int blueNearCubes = 0;
+	private boolean blueAuton = false;
+	private ElevatedState blueElevation = ElevatedState.NONE;
 
 	private int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
 	private int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
@@ -121,11 +121,17 @@ public class FoxData {
 		fireUpdate(UpdateType.SCORE);
 	}
 	
+	public ElevatedState getRedElevation() {
+		return this.redElevation;
+	}
 	public void setRedElevation(ElevatedState state) {
 		this.redElevation = state;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
+	public boolean getRedAuton() {
+		return this.redAuton;
+	}
 	public void setRedAuton(boolean auton) {
 		this.redAuton = auton;
 		
@@ -167,11 +173,17 @@ public class FoxData {
 		fireUpdate(UpdateType.SCORE);
 	}
 	
+	public ElevatedState getBlueElevation() {
+		return this.blueElevation;
+	}
 	public void setBlueElevation(ElevatedState state) {
 		this.blueElevation = state;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
+	public boolean getBlueAuton() {
+		return this.blueAuton;
+	}
 	public void setBlueAuton(boolean auton) {
 		this.blueAuton = auton;
 		
@@ -266,15 +278,15 @@ public class FoxData {
 	}
 	
 	public void clear() {
-		redFarStars = 0;
-		redFarCubes = 0;
+		redFarStars = 7;
+		redFarCubes = 1;
 		redNearStars = 0;
 		redNearCubes = 0;
 		redAuton = false;
 		redElevation = ElevatedState.NONE;
 		
-		blueFarStars = 0;
-		blueFarCubes = 0;
+		blueFarStars = 7;
+		blueFarCubes = 1;
 		blueNearStars = 0;
 		blueNearCubes = 0;
 		blueAuton = false;
