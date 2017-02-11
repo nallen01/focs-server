@@ -3,7 +3,7 @@ package me.nallen.fox.server;
 public class FoxServer {
 	public static FoxData foxData;
 	FoxGui gui;
-	TcpServer tcpServer;
+	public static TcpServer tcpServer;
 	
 	public static void main(String[] args) {
 		new FoxServer();

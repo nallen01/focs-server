@@ -85,6 +85,10 @@ public class TcpThread extends Thread implements DataListener {
     private boolean sendFoxCommand(ScoreField field, MessageType type, int value) {
         return sendMessage("" + field.getValue() + ((char)29) + type.getValue() + ((char)29) + value);
     }
+    
+    public void clear() {
+    	sendFoxCommand(ScoreField.CLEAR, MessageType.SET, 1);
+    }
 	
 	public void run() {
 		try {
@@ -230,6 +234,7 @@ public class TcpThread extends Thread implements DataListener {
 		    					}
 		    					else if(field == ScoreField.CLEAR) {
 		    						FoxServer.foxData.clear();
+		    						FoxServer.tcpServer.clearAll();
 		    					}
 		    				}
 		    			}
