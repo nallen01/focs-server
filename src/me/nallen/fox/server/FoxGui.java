@@ -35,8 +35,6 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final Color redColor = new Color(218, 38, 46);
 	private static final Color blueColor = new Color(0, 118, 190);
 	private static final Color whiteColor = new Color(255, 255, 255);
-	private static final Color grayColor = new Color(105, 105, 105);
-	private static final Color blackColor = new Color(0, 0, 0);
 	
 	private static final double SCORE_BOX_WIDTH = 186.0 / 1920;
 	private static final double SCORE_BOX_HEIGHT = 105.0 / 1080;
@@ -47,14 +45,12 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double SCORE_BOX_Y_CURVE = 0.2;
 	private static final double SCORE_BOX_FONT = 0.4;
 	
-	private static final double TOP_BOX_WIDTH = 0.15;
-	private static final double TOP_BOX_HEIGHT = 0.1;
-	private static final double TOP_BOX_TOP_OFFSET = 0.047;
-	private static final double TOP_BOX_SIDE_OFFSET = 0.1516;
+	private static final double TOP_BOX_WIDTH = 226.0 / 1920;
+	private static final double TOP_BOX_HEIGHT = 138.0 / 1080;
+	private static final double TOP_BOX_TOP_OFFSET = 37.0 / 1080;
+	private static final double TOP_BOX_SIDE_OFFSET = 0.0 / 1920;
 	private static final double TOP_BOX_X_CURVE = 0.10;
 	private static final double TOP_BOX_Y_CURVE = 0.20;
-	private static final double TOP_BOX_SIDE_GAP = 0.0625;
-	private static final double TOP_BOX_BOTTOM_GAP = 0.028;
 	
 	private static final double MAIN_BOX_WIDTH = 0.7;
 	private static final double MAIN_BOX_HEIGHT = 0.55;
@@ -176,17 +172,11 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		           int height = getHeight();
 		           Graphics2D graphics = (Graphics2D) g;
 		           graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		           graphics.setColor(grayColor);
+		           
+		           graphics.setColor(whiteColor);
 
 		           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
-		           graphics.fill(new Rectangle2D.Double(0,0,width-TOP_BOX_X_CURVE*width,height));
-		           
-		           graphics.setColor(blackColor);
-
-		           graphics.fill(new RoundRectangle2D.Double(0, 0, width - TOP_BOX_SIDE_GAP * width, height - TOP_BOX_BOTTOM_GAP * height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
-		           graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_SIDE_GAP * width, height - TOP_BOX_Y_CURVE * height - TOP_BOX_BOTTOM_GAP * height));
-		           graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_X_CURVE * width - TOP_BOX_SIDE_GAP * width, height - TOP_BOX_BOTTOM_GAP * height));
+		           graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_X_CURVE * width, height));
 	           }
 	        }
 	    };
@@ -255,11 +245,6 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private void paintGraph(JPanel p, Graphics2D g, Color c, int[] points) {
 		int width = p.getWidth();
 		int height = p.getHeight() - 1;
-		
-		if(!FoxServer.foxData.getLargeHistory()) {
-			width = (int) (width * (1 - TOP_BOX_SIDE_GAP));
-			height = (int) (height * (1 - TOP_BOX_BOTTOM_GAP));
-		}
 		
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(c);
