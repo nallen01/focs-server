@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Window;
@@ -17,8 +18,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,20 +32,19 @@ import javax.swing.SwingConstants;
 public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
 	private static final Color chromaColor = new Color(255, 0, 255);
-	private static final Color redColor = new Color(238, 49, 36);
-	private static final Color blueColor = new Color(0, 130, 200);
+	private static final Color redColor = new Color(218, 38, 46);
+	private static final Color blueColor = new Color(0, 118, 190);
 	private static final Color whiteColor = new Color(255, 255, 255);
 	private static final Color grayColor = new Color(105, 105, 105);
 	private static final Color blackColor = new Color(0, 0, 0);
 	
-	private static final double SCORE_BOX_WIDTH = 109.0 / 1920;
-	private static final double SCORE_BOX_HEIGHT = 77.0 / 1080;
-	private static final double RED_SCORE_BOX_X = 744.0 / 1920;
-	private static final double BLUE_SCORE_BOX_X = 1069.0 / 1920;
-	private static final double SCORE_BOX_BOTTOM_OFFSET = 123.0 / 1080;
-	private static final double SCORE_BOX_GREY_WIDTH = 5.0 / 1920;
-	private static final double SCORE_BOX_X_CURVE = 0.4;
-	private static final double SCORE_BOX_Y_CURVE = 0.7;
+	private static final double SCORE_BOX_WIDTH = 186.0 / 1920;
+	private static final double SCORE_BOX_HEIGHT = 105.0 / 1080;
+	private static final double RED_SCORE_BOX_X = 226.0 / 1920;
+	private static final double BLUE_SCORE_BOX_X = 1508.0 / 1920;
+	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.0 / 1080;
+	private static final double SCORE_BOX_X_CURVE = 0.15;
+	private static final double SCORE_BOX_Y_CURVE = 0.2;
 	private static final double SCORE_BOX_FONT = 0.4;
 	
 	private static final double TOP_BOX_WIDTH = 0.15;
@@ -69,11 +72,9 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	private JPanel redScorePanel;
 	private JLabel redScore;
-	private JPanel redScoreGreyPanel;
 
 	private JPanel blueScorePanel;
 	private JLabel blueScore;
-	private JPanel blueScoreGreyPanel;
 	
 	private JPanel historyPanel;
 	private JPanel redHistoryPanel;
@@ -81,6 +82,21 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	public FoxGui() {
 		super("The Fox");
+		
+		setContentPane(new JPanel() {
+			private static final long serialVersionUID = 1L;
+			private Image img;
+			
+			public void paintComponent(Graphics g) {
+				if(img == null) {
+					try {
+						img = ImageIO.read(new File("/Users/nathan/Google Drive/Robotics/AudOverlay.png"));
+					}
+					catch(IOException ex) {}
+				}
+				g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
+			}
+		});
 		
 		getContentPane().setBackground(chromaColor);
 		getContentPane().setPreferredSize(new Dimension(1280, 720));
@@ -101,10 +117,9 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	           Graphics2D graphics = (Graphics2D) g;
 	           graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-	           graphics.setColor(whiteColor);
+	           graphics.setColor(redColor);
 
 	           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, SCORE_BOX_X_CURVE * width, SCORE_BOX_Y_CURVE * height));
-	           graphics.fill(new Rectangle2D.Double(SCORE_BOX_X_CURVE*width,0,width-SCORE_BOX_X_CURVE*width,height));
 	           graphics.fill(new Rectangle2D.Double(0,SCORE_BOX_Y_CURVE*height,width,height-SCORE_BOX_Y_CURVE*height));
 	        }
 	    };
@@ -113,14 +128,12 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    
 	    redScore = new JLabel("0");
 	    redScore.setHorizontalAlignment(SwingConstants.CENTER);
-	    redScore.setForeground(redColor);
+	    redScore.setForeground(whiteColor);
+	    // Open Sans should be pretty close, or Roboto?
+	    //redScore.setFont(new Font("Open Sans", Font.PLAIN, 12));
 	    
 	    redScorePanel.add(redScore);
 	    add(redScorePanel);
-	    
-	    redScoreGreyPanel = new JPanel();
-	    redScoreGreyPanel.setBackground(grayColor);
-	    add(redScoreGreyPanel);
 	    
 	    blueScorePanel = new JPanel() {
 	    	private static final long serialVersionUID = 1L;
@@ -133,10 +146,9 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	           Graphics2D graphics = (Graphics2D) g;
 	           graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-	           graphics.setColor(whiteColor);
+	           graphics.setColor(blueColor);
 
 	           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, SCORE_BOX_X_CURVE * width, SCORE_BOX_Y_CURVE * height));
-	           graphics.fill(new Rectangle2D.Double(0,0,width-SCORE_BOX_X_CURVE*width,height));
 	           graphics.fill(new Rectangle2D.Double(0,SCORE_BOX_Y_CURVE*height,width,height-SCORE_BOX_Y_CURVE*height));
 	        }
 	    };
@@ -145,14 +157,12 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    
 	    blueScore = new JLabel("0");
 	    blueScore.setHorizontalAlignment(SwingConstants.CENTER);
-	    blueScore.setForeground(blueColor);
+	    blueScore.setForeground(whiteColor);
+	    // Open Sans should be pretty close, or Roboto?
+	    //blueScore.setFont(new Font("Open Sans", Font.PLAIN, 12));
 	    
 	    blueScorePanel.add(blueScore);
 	    add(blueScorePanel);
-	    
-	    blueScoreGreyPanel = new JPanel();
-	    blueScoreGreyPanel.setBackground(grayColor);
-	    add(blueScoreGreyPanel);
 	    
 	    historyPanel = new JPanel() {
 	    	private static final long serialVersionUID = 1L;
@@ -308,20 +318,15 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		double panel_y = height - SCORE_BOX_BOTTOM_OFFSET * height - panel_height;
 		double red_panel_x = RED_SCORE_BOX_X * width;
 		double blue_panel_x = BLUE_SCORE_BOX_X * width;
-		double grey_bar_width = SCORE_BOX_GREY_WIDTH * width;
 		
 		setDoubleBounds(redScorePanel, red_panel_x, panel_y, panel_width, panel_height);
 	    redScore.setBounds(0, 0, redScorePanel.getWidth(), redScorePanel.getHeight());
 	    redScore.setFont(new Font(redScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*redScorePanel.getWidth())));
 	    
-	    setDoubleBounds(redScoreGreyPanel, redScorePanel.getBounds().x + redScorePanel.getBounds().width, panel_y, grey_bar_width, panel_height);
-	    
 	    setDoubleBounds(blueScorePanel, blue_panel_x, panel_y, panel_width, panel_height);
 	    blueScore.setBounds(0, 0, blueScorePanel.getWidth(), blueScorePanel.getHeight());
 	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
 
-	    setDoubleBounds(blueScoreGreyPanel, blueScorePanel.getBounds().x - grey_bar_width, panel_y, grey_bar_width, panel_height);
-	    
 	    if(FoxServer.foxData.getShowHistory()) {
 	    	if(FoxServer.foxData.getLargeHistory()) {
 			    int middle_box_width = (int) (MAIN_BOX_WIDTH * width);
