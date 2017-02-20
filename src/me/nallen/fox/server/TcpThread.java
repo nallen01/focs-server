@@ -34,6 +34,8 @@ public class TcpThread extends Thread implements DataListener {
     	LARGE_HISTORY(14),
     	HIDE(16),
     	
+    	THREE_TEAM(17),
+    	
     	CLEAR(15);
 		
 		private final int id;
@@ -239,6 +241,9 @@ public class TcpThread extends Thread implements DataListener {
 		    					}
 		    					else if(field == ScoreField.HIDE) {
 		    						FoxServer.foxData.setHidden(num > 0);
+		    					}
+		    					else if(field == ScoreField.THREE_TEAM) {
+		    						FoxServer.foxData.setThreeTeam(num > 0);
 		    					}
 		    				}
 		    			}

@@ -38,6 +38,8 @@ public class FoxData {
 	private boolean showHistory = true;
 	private boolean largeHistory = true;
 	private boolean isHidden = false;
+	
+	private boolean isThreeTeam = false;
 
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
@@ -79,6 +81,10 @@ public class FoxData {
 	
 	public boolean getHidden() {
 		return isHidden;
+	}
+	
+	public boolean getThreeTeam() {
+		return isThreeTeam;
 	}
 	
 	public synchronized void addListener(DataListener listener)  {
@@ -215,6 +221,11 @@ public class FoxData {
 	
 	public void setHidden(boolean hidden) {
 		this.isHidden = hidden;
+		fireUpdate(UpdateType.SETTING);
+	}
+	
+	public void setThreeTeam(boolean threeTeam) {
+		this.isThreeTeam = threeTeam;
 		fireUpdate(UpdateType.SETTING);
 	}
 	

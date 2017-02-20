@@ -60,6 +60,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	private static final double MAIN_BOX_WIDTH = 186.0 / 1920;
 	private static final double MAIN_BOX_HEIGHT = 714.0 / 1080;
+	private static final double MAIN_BOX_HEIGHT_SHORT = 674.0 / 1080;
 	private static final double MAIN_BOX_X = 30.0 / 1920;
 	private static final double MAIN_BOX_Y = 182.0 / 1080;
 	private static final double MAIN_BOX_X_CURVE = 0.15;
@@ -99,7 +100,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			public void paintComponent(Graphics g) {
 				if(img == null) {
 					try {
-						img = ImageIO.read(new File("/Users/nathan/Google Drive/Robotics/AudOverlay.png"));
+						img = ImageIO.read(new File("/Users/nathan/Google Drive/Robotics/AudOverlay2.png"));
 					}
 					catch(IOException ex) {}
 				}
@@ -478,6 +479,9 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    	if(FoxServer.foxData.getLargeHistory()) {
 			    int middle_box_width = (int) (MAIN_BOX_WIDTH * width);
 			    int middle_box_height = (int) (MAIN_BOX_HEIGHT * height);
+			    if(FoxServer.foxData.getThreeTeam()) {
+			    	middle_box_height = (int) (MAIN_BOX_HEIGHT_SHORT * height);
+			    }
 			    int middle_box_x = (int) (MAIN_BOX_X * width);
 			    int middle_box_y = (int) (MAIN_BOX_Y * height);
 			    
