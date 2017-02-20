@@ -444,6 +444,22 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		int width = getContentPane().getWidth();
 		int height = getContentPane().getHeight();
 		
+		if(FoxServer.foxData.getHidden()) {
+			redScorePanel.setVisible(false);
+			redScoreBar.setVisible(false);
+			blueScorePanel.setVisible(false);
+			blueScoreBar.setVisible(false);
+			historyPanel.setVisible(false);
+			
+			return;
+		}
+
+		redScorePanel.setVisible(true);
+		redScoreBar.setVisible(true);
+		blueScorePanel.setVisible(true);
+		blueScoreBar.setVisible(true);
+		historyPanel.setVisible(true);
+		
 		double panel_width = SCORE_BOX_WIDTH * width;
 		double panel_height =  SCORE_BOX_HEIGHT * height;
 		double panel_y = height - SCORE_BOX_BOTTOM_OFFSET * height - panel_height;

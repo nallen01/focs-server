@@ -32,6 +32,7 @@ public class TcpThread extends Thread implements DataListener {
     	PAUSED(12),
     	HISTORY(13),
     	LARGE_HISTORY(14),
+    	HIDE(16),
     	
     	CLEAR(15);
 		
@@ -235,6 +236,9 @@ public class TcpThread extends Thread implements DataListener {
 		    					else if(field == ScoreField.CLEAR) {
 		    						FoxServer.foxData.clear();
 		    						FoxServer.tcpServer.clearAll();
+		    					}
+		    					else if(field == ScoreField.HIDE) {
+		    						FoxServer.foxData.setHidden(num > 0);
 		    					}
 		    				}
 		    			}

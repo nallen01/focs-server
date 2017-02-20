@@ -37,6 +37,7 @@ public class FoxData {
 	
 	private boolean showHistory = true;
 	private boolean largeHistory = true;
+	private boolean isHidden = false;
 
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
@@ -74,6 +75,10 @@ public class FoxData {
 	
 	public boolean getShowHistory() {
 		return showHistory;
+	}
+	
+	public boolean getHidden() {
+		return isHidden;
 	}
 	
 	public synchronized void addListener(DataListener listener)  {
@@ -205,6 +210,11 @@ public class FoxData {
 	
 	public void setLargeHistory(boolean large) {
 		this.largeHistory = large;
+		fireUpdate(UpdateType.SETTING);
+	}
+	
+	public void setHidden(boolean hidden) {
+		this.isHidden = hidden;
 		fireUpdate(UpdateType.SETTING);
 	}
 	
