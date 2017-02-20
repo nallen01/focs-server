@@ -100,7 +100,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			public void paintComponent(Graphics g) {
 				if(img == null) {
 					try {
-						img = ImageIO.read(new File("/Users/nathan/Google Drive/Robotics/AudOverlay2.png"));
+						img = ImageIO.read(new File("/Users/nathan/Google Drive/Robotics/AudOverlay.png"));
 					}
 					catch(IOException ex) {}
 				}
