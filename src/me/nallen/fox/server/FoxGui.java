@@ -65,7 +65,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_Y = 182.0 / 1080;
 	private static final double MAIN_BOX_X_CURVE = 0.15;
 	private static final double MAIN_BOX_Y_CURVE = 0.03;
-	private static final int MAIN_BOX_DIVIDER_SECONDS = 60;
+	private static final int MAIN_BOX_DIVIDER_SECONDS = 30;
 	private static final double MAIN_BOX_DIVIDER_X = 0.05;
 	private static final double MAIN_BOX_DIVIDER_WIDTH = 0.9;
 	
