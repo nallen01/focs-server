@@ -4,6 +4,6 @@ public interface DataListener {
 	public void update(UpdateType type);
 	
 	public enum UpdateType {
-	    TICK, SCORE, SETTING
+	    TICK, SCORE, SETTING, CLEAR
 	}
 }
