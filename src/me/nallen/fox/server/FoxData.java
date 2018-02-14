@@ -15,19 +15,17 @@ public class FoxData {
 	public static final int NUM_HISTORY_POINTS = (int) (HISTORY_SECONDS * HISTORY_FREQUENCY) + 1;
 	public static final int HISTORY_MILLISECONDS = (int) (1000 / HISTORY_FREQUENCY);
 	
-	private int redFarStars = 7;
-	private int redFarCubes = 1;
-	private int redNearStars = 0;
-	private int redNearCubes = 0;
+	private int[] redBaseCones = {0, 0, 0, 0};
+	private ScoringZone[] redBaseZones = {ScoringZone.NONE, ScoringZone.NONE, ScoringZone.NONE, ScoringZone.NONE};
+	private int redStationaryCones = 0;
+	private int redParking = 0;
 	private boolean redAuton = false;
-	private ElevatedState redElevation = ElevatedState.NONE;
 	
-	private int blueFarStars = 7;
-	private int blueFarCubes = 1;
-	private int blueNearStars = 0;
-	private int blueNearCubes = 0;
+	private int[] blueBaseCones = {0, 0, 0, 0};
+	private ScoringZone[] blueBaseZones = {ScoringZone.NONE, ScoringZone.NONE, ScoringZone.NONE, ScoringZone.NONE};
+	private int blueStationaryCones = 0;
+	private int blueParking = 0;
 	private boolean blueAuton = false;
-	private ElevatedState blueElevation = ElevatedState.NONE;
 
 	private int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
 	private int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
@@ -43,21 +41,32 @@ public class FoxData {
 
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
-	public enum ElevatedState {
+	public enum ScoringZone {
 	    NONE(0),
-	    LOW(1),
-	    HIGH(2);
+	    FIVE_POINT(1),
+	    TEN_POINT(2),
+	    TWENTY_POINT(3);
 		
 		private final int id;
-		ElevatedState(int id) { this.id = id; }
+		ScoringZone(int id) { this.id = id; }
 		public int getValue() { return id; }
-		public static ElevatedState fromInt(int id) {
-			ElevatedState[] values = ElevatedState.values();
+		public static ScoringZone fromInt(int id) {
+			ScoringZone[] values = ScoringZone.values();
             for(int i=0; i<values.length; i++) {
                 if(values[i].getValue() == id)
                     return values[i];
             }
             return null;
+		}
+		
+		public int getScore() {
+			switch(this) {
+			case NONE: return 0;
+			case FIVE_POINT: return 5;
+			case TEN_POINT: return 10;
+			case TWENTY_POINT: return 20;
+			default: return 0;
+			}
 		}
 	}
 	
@@ -100,43 +109,35 @@ public class FoxData {
 		}
 	}
 	
-	public int getRedFarStars() {
-		return this.redFarStars;
+	public int getRedBaseCones(int index) {
+		return this.redBaseCones[index];
 	}
-	public void setRedFarStars(int num) {
-		this.redFarStars = num;
+	public void setRedBaseCones(int index, int num) {
+		this.redBaseCones[index] = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedFarCubes() {
-		return this.redFarCubes;
+	public ScoringZone getRedBaseZone(int index) {
+		return this.redBaseZones[index];
 	}
-	public void setRedFarCubes(int num) {
-		this.redFarCubes = num;
+	public void setRedBaseZone(int index, ScoringZone zone) {
+		this.redBaseZones[index] = zone;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedNearStars() {
-		return this.redNearStars;
+	public int getRedStationaryCones() {
+		return this.redStationaryCones;
 	}
-	public void setRedNearStars(int num) {
-		this.redNearStars = num;
+	public void setRedStationaryCones(int num) {
+		this.redStationaryCones = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedNearCubes() {
-		return this.redNearCubes;
+	public int getRedParking() {
+		return this.redParking;
 	}
-	public void setRedNearCubes(int num) {
-		this.redNearCubes = num;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public ElevatedState getRedElevation() {
-		return this.redElevation;
-	}
-	public void setRedElevation(ElevatedState state) {
-		this.redElevation = state;
+	public void setRedParking(int num) {
+		this.redParking = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -152,43 +153,35 @@ public class FoxData {
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueFarStars() {
-		return this.blueFarStars;
+	public int getBlueBaseCones(int index) {
+		return this.blueBaseCones[index];
 	}
-	public void setBlueFarStars(int num) {
-		this.blueFarStars = num;
+	public void setBlueBaseCones(int index, int num) {
+		this.blueBaseCones[index] = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueFarCubes() {
-		return this.blueFarCubes;
+	public ScoringZone getBlueBaseZone(int index) {
+		return this.blueBaseZones[index];
 	}
-	public void setBlueFarCubes(int num) {
-		this.blueFarCubes = num;
+	public void setBlueBaseZone(int index, ScoringZone zone) {
+		this.blueBaseZones[index] = zone;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueNearStars() {
-		return this.blueNearStars;
+	public int getBlueStationaryCones() {
+		return this.blueStationaryCones;
 	}
-	public void setBlueNearStars(int num) {
-		this.blueNearStars = num;
+	public void setBlueStationaryCones(int num) {
+		this.blueStationaryCones = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueNearCubes() {
-		return this.blueNearCubes;
+	public int getBlueParking() {
+		return this.blueParking;
 	}
-	public void setBlueNearCubes(int num) {
-		this.blueNearCubes = num;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public ElevatedState getBlueElevation() {
-		return this.blueElevation;
-	}
-	public void setBlueElevation(ElevatedState state) {
-		this.blueElevation = state;
+	public void setBlueParking(int num) {
+		this.blueParking = num;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -229,25 +222,70 @@ public class FoxData {
 		fireUpdate(UpdateType.SETTING);
 	}
 	
+	private int getHighestStacks(int alliance) {
+		int[][] highestStacks = {{0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}};
+		
+		for(int i=0; i<4; i++) {
+			if(redBaseZones[i] != ScoringZone.NONE) {
+				int zone = redBaseZones[i].getValue();
+				if(redBaseCones[i] > highestStacks[0][zone])
+					highestStacks[0][zone] = redBaseCones[i];
+			}
+			
+			if(blueBaseZones[i] != ScoringZone.NONE) {
+				int zone = blueBaseZones[i].getValue();
+				if(blueBaseCones[i] > highestStacks[1][zone])
+					highestStacks[1][zone] = blueBaseCones[i];
+			}
+		}
+		
+		highestStacks[0][4] = redStationaryCones;
+		highestStacks[1][4] = blueStationaryCones;
+		
+		int count = 0;
+		for(int i=0; i<5; i++) {
+			if(highestStacks[alliance][i] > highestStacks[1-alliance][i])
+				count++;
+		}
+		
+		return count;
+	}
+	
+	public int getRedHighestStacks() {
+		return getHighestStacks(0);
+	}
+	
+	public int getBlueHighestStacks() {
+		return getHighestStacks(1);
+	}
+	
 	public int getRedScore() {
 		int score = 0;
-		score += redNearStars;
-		score += redNearCubes * 2;
-		score += redFarStars * 2;
-		score += redFarCubes * 4;
-		score += redAuton ? 4 : 0;
-		score += redElevation == ElevatedState.HIGH ? 12 : redElevation == ElevatedState.LOW ? 4 : 0;
+		for(int i=0; i<4; i++) {
+			score += redBaseCones[i] * 2;
+			score += redBaseZones[i].getScore();
+		}
+		score += redStationaryCones * 2;
+		
+		score += getRedHighestStacks() * 5;
+		
+		score += redParking * 2;
+		score += redAuton ? 10 : 0;
 		return score;
 	}
 	
 	public int getBlueScore() {
 		int score = 0;
-		score += blueNearStars;
-		score += blueNearCubes * 2;
-		score += blueFarStars * 2;
-		score += blueFarCubes * 4;
-		score += blueAuton ? 4 : 0;
-		score += blueElevation == ElevatedState.HIGH ? 12 : blueElevation == ElevatedState.LOW ? 4 : 0;
+		for(int i=0; i<4; i++) {
+			score += blueBaseCones[i] * 2;
+			score += blueBaseZones[i].getScore();
+		}
+		score += blueStationaryCones * 2;
+		
+		score += getBlueHighestStacks() * 5;
+		
+		score += blueParking * 2;
+		score += blueAuton ? 10 : 0;
 		return score;
 	}
 	
@@ -299,19 +337,16 @@ public class FoxData {
 	}
 	
 	public void clear() {
-		redFarStars = 7;
-		redFarCubes = 1;
-		redNearStars = 0;
-		redNearCubes = 0;
+		Arrays.fill(redBaseCones, 0);
+		Arrays.fill(redBaseZones, ScoringZone.NONE);
+		redStationaryCones = 0;
 		redAuton = false;
-		redElevation = ElevatedState.NONE;
 		
-		blueFarStars = 7;
-		blueFarCubes = 1;
-		blueNearStars = 0;
-		blueNearCubes = 0;
+
+		Arrays.fill(blueBaseCones, 0);
+		Arrays.fill(blueBaseZones, ScoringZone.NONE);
+		blueStationaryCones = 0;
 		blueAuton = false;
-		blueElevation = ElevatedState.NONE;
 		
 		for(int i=0; i<NUM_HISTORY_POINTS; i++) {
 			redScoreHistory[i] = -1;
