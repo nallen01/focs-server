@@ -46,6 +46,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double SCORE_BOX_Y_CURVE = 0.2;
 	private static final double SCORE_BOX_FONT = 0.3;
 	
+	private static final boolean INCLUDE_SCORE_BARS = false;
 	private static final double SCORE_BAR_X = 412.0 / 1920;
 	private static final double SCORE_BAR_Y = 1060.0 / 1080;
 	private static final double SCORE_BAR_WIDTH = 1096.0 / 1920;
@@ -58,6 +59,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double TOP_BOX_X_CURVE = 0.10;
 	private static final double TOP_BOX_Y_CURVE = 0.20;
 	
+	private static final GraphMethod MAIN_BOX_METHOD = GraphMethod.ABSOLUTE;
 	private static final double MAIN_BOX_WIDTH = 186.0 / 1920;
 	private static final double MAIN_BOX_HEIGHT = 714.0 / 1080;
 	private static final double MAIN_BOX_HEIGHT_SHORT = 674.0 / 1080;
@@ -89,6 +91,11 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	private JPanel historyPanel;
 	private JPanel graphPanel;
+	
+	private enum GraphMethod {
+		FRACTIONAL,
+		ABSOLUTE
+	}
 	
 	public FoxGui() {
 		super("The Fox");
@@ -301,14 +308,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		double pixels_per_y = ((double) height) / (FoxData.NUM_HISTORY_POINTS - 1);
 		
 		int points = redPoints.length < bluePoints.length ? redPoints.length : bluePoints.length;
-		
-		double prevFrac = 0.5;
-		if(points > 0) {
-			if((redPoints[0] + bluePoints[0]) > 0) {
-				prevFrac = ((double) bluePoints[0]) / (redPoints[0] + bluePoints[0]);
-			}
-		}
-		
+
 		int validPoints = points;
 		for(int i=0; i<points; i++) {
 			if(redPoints[i] < 0 || bluePoints[i] < 0) {
@@ -318,55 +318,85 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			}
 		}
 		
-		int yOffset = points - validPoints;
-		
-		for(int i=1; i<validPoints; i++) {
-			if(redPoints[i] >= 0 && bluePoints[i] >= 0) {
-				double fraction = 0.5;
-				if((redPoints[i] + bluePoints[i]) > 0) {
-					fraction = ((double) bluePoints[i]) / (redPoints[i] + bluePoints[i]);
+		if(MAIN_BOX_METHOD == GraphMethod.FRACTIONAL) {
+			double prevFrac = 0.5;
+			if(points > 0) {
+				if((redPoints[0] + bluePoints[0]) > 0) {
+					prevFrac = ((double) bluePoints[0]) / (redPoints[0] + bluePoints[0]);
 				}
+			}
+			
+			int yOffset = points - validPoints;
+			
+			for(int i=1; i<validPoints; i++) {
+				if(redPoints[i] >= 0 && bluePoints[i] >= 0) {
+					double fraction = 0.5;
+					if((redPoints[i] + bluePoints[i]) > 0) {
+						fraction = ((double) bluePoints[i]) / (redPoints[i] + bluePoints[i]);
+					}
 
-				int start_y = (int) (pixels_per_y * (yOffset + i-1));
-				int start_x = (int) (width * prevFrac);
-				int end_y = (int) (pixels_per_y * (yOffset + i));
-				int end_x = (int) (width * fraction);
-				
-				if(fraction > 0.5 && prevFrac < 0.5) {
-					int orig_y = start_y;
-					int orig_x = start_x;
+					int start_y = (int) (pixels_per_y * (yOffset + i-1));
+					int start_x = (int) (width * prevFrac);
+					int end_y = (int) (pixels_per_y * (yOffset + i));
+					int end_x = (int) (width * fraction);
 					
-					double diff = fraction - prevFrac;
-					double midPoint = (0.5 - prevFrac) / diff;
+					if(fraction > 0.5 && prevFrac < 0.5) {
+						int orig_y = start_y;
+						int orig_x = start_x;
+						
+						double diff = fraction - prevFrac;
+						double midPoint = (0.5 - prevFrac) / diff;
+						
+						start_y = (int) (pixels_per_y * (yOffset+i-1+midPoint));
+						start_x = (int) (width * 0.5);
+						
+						g.setColor(getColorForFraction((prevFrac + 0.5) / 2));
+						g.drawLine(orig_x, orig_y, start_x, start_y);
+						
+						prevFrac = 0.5;
+					}
+					else if(fraction < 0.5 && prevFrac > 0.5) {
+						int orig_y = start_y;
+						int orig_x = start_x;
+						
+						double diff = prevFrac - fraction;
+						double midPoint = (prevFrac - 0.5) / diff;
+						
+						start_y = (int) (pixels_per_y * (yOffset+i-1+midPoint));
+						start_x = (int) (width * 0.5);
+						
+						g.setColor(getColorForFraction((prevFrac + 0.5) / 2));
+						g.drawLine(orig_x, orig_y, start_x, start_y);
+						
+						prevFrac = 0.5;
+					}
 					
-					start_y = (int) (pixels_per_y * (yOffset+i-1+midPoint));
-					start_x = (int) (width * 0.5);
+					g.setColor(getColorForFraction((prevFrac + fraction) / 2));
+					g.drawLine(start_x, start_y, end_x, end_y);
 					
-					g.setColor(getColorForFraction((prevFrac + 0.5) / 2));
-					g.drawLine(orig_x, orig_y, start_x, start_y);
-					
-					prevFrac = 0.5;
+					prevFrac = fraction;
 				}
-				else if(fraction < 0.5 && prevFrac > 0.5) {
-					int orig_y = start_y;
-					int orig_x = start_x;
-					
-					double diff = prevFrac - fraction;
-					double midPoint = (prevFrac - 0.5) / diff;
-					
-					start_y = (int) (pixels_per_y * (yOffset+i-1+midPoint));
-					start_x = (int) (width * 0.5);
-					
-					g.setColor(getColorForFraction((prevFrac + 0.5) / 2));
-					g.drawLine(orig_x, orig_y, start_x, start_y);
-					
-					prevFrac = 0.5;
+			}
+		}
+		else {
+			double pixels_per_x = ((double) width) / GRAPH_MAX_Y_VALUE;
+			
+			int yOffset = points - validPoints;
+			
+			for(int c=0; c<2; c++) {
+				int[] data = c == 0 ? redPoints : bluePoints;
+				g.setColor(c == 0 ? redColor : blueColor);
+				
+				for(int i=1; i<validPoints; i++) {
+					if(data[i] >= 0) {
+						int start_y = (int) (pixels_per_y * (yOffset + i-1));
+						int start_x = (int) (pixels_per_x * data[i-1]);
+						int end_y = (int) (pixels_per_y * (yOffset + i));
+						int end_x = (int) (pixels_per_x * data[i]);
+						
+						g.drawLine(start_x, start_y, end_x, end_y);
+					}
 				}
-				
-				g.setColor(getColorForFraction((prevFrac + fraction) / 2));
-				g.drawLine(start_x, start_y, end_x, end_y);
-				
-				prevFrac = fraction;
 			}
 		}
 	}
@@ -407,7 +437,8 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	public void updateGraphs() {
 		graphPanel.repaint();
 		
-		updateScoreBars();
+		if(INCLUDE_SCORE_BARS)
+			updateScoreBars();
 	}
 
 	public void update(UpdateType type) {
@@ -489,7 +520,8 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    
 	    graphPanel.setBounds(0, 0, historyPanel.getWidth(), historyPanel.getHeight());
 	    
-	    updateScoreBars();
+	    if(INCLUDE_SCORE_BARS)
+	    	updateScoreBars();
 	}
 	
 	public void toggleFullScreen() {
