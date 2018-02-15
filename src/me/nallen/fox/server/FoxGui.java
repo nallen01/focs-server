@@ -69,7 +69,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_DIVIDER_X = 0.05;
 	private static final double MAIN_BOX_DIVIDER_WIDTH = 0.9;
 	
-	private static final int GRAPH_MAX_Y_VALUE = 80;
+	private static final int GRAPH_MAX_Y_VALUE = 150;
 	private static final double GRAPH_LINE_WIDTH = 0.006;
 	private static final double GRAPH_VERTICAL_LINE_WIDTH = 0.02;
 	
@@ -302,7 +302,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		
 		int points = redPoints.length < bluePoints.length ? redPoints.length : bluePoints.length;
 		
-		double prevFrac = 0;
+		double prevFrac = 0.5;
 		if(points > 0) {
 			if((redPoints[0] + bluePoints[0]) > 0) {
 				prevFrac = ((double) bluePoints[0]) / (redPoints[0] + bluePoints[0]);
