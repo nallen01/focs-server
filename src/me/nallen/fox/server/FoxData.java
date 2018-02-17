@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import me.nallen.fox.server.DataListener.UpdateType;
 
 public class FoxData {
-	public static final int HISTORY_SECONDS = 180;
+	public static final int HISTORY_SECONDS = 120;
 	public static final double HISTORY_FREQUENCY = 10;
 	public static final int NUM_HISTORY_POINTS = (int) (HISTORY_SECONDS * HISTORY_FREQUENCY) + 1;
 	public static final int HISTORY_MILLISECONDS = (int) (1000 / HISTORY_FREQUENCY);
@@ -341,12 +341,14 @@ public class FoxData {
 		Arrays.fill(redBaseZones, ScoringZone.NONE);
 		redStationaryCones = 0;
 		redAuton = false;
+		redParking = 0;
 		
 
 		Arrays.fill(blueBaseCones, 0);
 		Arrays.fill(blueBaseZones, ScoringZone.NONE);
 		blueStationaryCones = 0;
 		blueAuton = false;
+		blueParking = 0;
 		
 		for(int i=0; i<NUM_HISTORY_POINTS; i++) {
 			redScoreHistory[i] = -1;
