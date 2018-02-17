@@ -326,14 +326,23 @@ public class FoxData {
 	}
 	
 	public void doTick() {
+		
 		if(!isPaused) {
 			redScoreHistory[scoreHistoryPos] = getRedScore();
 			blueScoreHistory[scoreHistoryPos] = getBlueScore();
 			
 			scoreHistoryPos = (scoreHistoryPos + 1) % NUM_HISTORY_POINTS;
-			
-			fireUpdate(UpdateType.TICK);
 		}
+		else {
+			int writePos = scoreHistoryPos - 1;
+			if(writePos < 0)
+				writePos += NUM_HISTORY_POINTS;
+			
+			redScoreHistory[writePos] = getRedScore();
+			blueScoreHistory[writePos] = getBlueScore();
+		}
+		
+		fireUpdate(UpdateType.TICK);
 	}
 	
 	public void clear() {
