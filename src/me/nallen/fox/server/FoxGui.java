@@ -67,7 +67,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_Y = 182.0 / 1080;
 	private static final double MAIN_BOX_X_CURVE = 0.15;
 	private static final double MAIN_BOX_Y_CURVE = 0.03;
-	private static final int MAIN_BOX_DIVIDER_SECONDS = 30;
+	private static final int[] MAIN_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
 	private static final double MAIN_BOX_DIVIDER_X = 0.05;
 	private static final double MAIN_BOX_DIVIDER_WIDTH = 0.9;
 	
@@ -202,9 +202,12 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 					int start_x = (int) (MAIN_BOX_DIVIDER_X * width);
 					int end_x = (int) ((MAIN_BOX_DIVIDER_X + MAIN_BOX_DIVIDER_WIDTH) * width);
 	
-					for(int i=1; i<FoxData.HISTORY_SECONDS / MAIN_BOX_DIVIDER_SECONDS; i++) {
-						int y = (int) (pixels_per_sec * i * MAIN_BOX_DIVIDER_SECONDS);
-						graphics.drawLine(start_x, y, end_x, y);
+					for(int i=0; i<MAIN_BOX_DIVIDERS_SECONDS.length; i++) {
+						if(MAIN_BOX_DIVIDERS_SECONDS[i] < FoxData.HISTORY_SECONDS
+								&& MAIN_BOX_DIVIDERS_SECONDS[i] > 0) {
+							int y = (int) (pixels_per_sec * MAIN_BOX_DIVIDERS_SECONDS[i]);
+							graphics.drawLine(start_x, y, end_x, y);
+						}
 					}
 	           }
 	           else {
@@ -309,15 +312,6 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		
 		int points = redPoints.length < bluePoints.length ? redPoints.length : bluePoints.length;
 
-		int validPoints = points;
-		for(int i=0; i<points; i++) {
-			if(redPoints[i] < 0 || bluePoints[i] < 0) {
-				validPoints = i;
-				
-				break;
-			}
-		}
-		
 		if(MAIN_BOX_METHOD == GraphMethod.FRACTIONAL) {
 			double prevFrac = 0.5;
 			if(points > 0) {
@@ -326,18 +320,16 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 				}
 			}
 			
-			int yOffset = points - validPoints;
-			
-			for(int i=1; i<validPoints; i++) {
+			for(int i=1; i<points; i++) {
 				if(redPoints[i] >= 0 && bluePoints[i] >= 0) {
 					double fraction = 0.5;
 					if((redPoints[i] + bluePoints[i]) > 0) {
 						fraction = ((double) bluePoints[i]) / (redPoints[i] + bluePoints[i]);
 					}
 
-					int start_y = (int) (pixels_per_y * (yOffset + i-1));
+					int start_y = (int) (pixels_per_y * (i-1));
 					int start_x = (int) (width * prevFrac);
-					int end_y = (int) (pixels_per_y * (yOffset + i));
+					int end_y = (int) (pixels_per_y * (i));
 					int end_x = (int) (width * fraction);
 					
 					if(fraction > 0.5 && prevFrac < 0.5) {
@@ -347,7 +339,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 						double diff = fraction - prevFrac;
 						double midPoint = (0.5 - prevFrac) / diff;
 						
-						start_y = (int) (pixels_per_y * (yOffset+i-1+midPoint));
+						start_y = (int) (pixels_per_y * (i-1+midPoint));
 						start_x = (int) (width * 0.5);
 						
 						g.setColor(getColorForFraction((prevFrac + 0.5) / 2));
@@ -362,7 +354,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 						double diff = prevFrac - fraction;
 						double midPoint = (prevFrac - 0.5) / diff;
 						
-						start_y = (int) (pixels_per_y * (yOffset+i-1+midPoint));
+						start_y = (int) (pixels_per_y * (i-1+midPoint));
 						start_x = (int) (width * 0.5);
 						
 						g.setColor(getColorForFraction((prevFrac + 0.5) / 2));
@@ -381,17 +373,15 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 		else {
 			double pixels_per_x = ((double) width) / GRAPH_MAX_Y_VALUE;
 			
-			int yOffset = points - validPoints;
-			
 			for(int c=0; c<2; c++) {
 				int[] data = c == 0 ? redPoints : bluePoints;
 				g.setColor(c == 0 ? redColor : blueColor);
 				
-				for(int i=1; i<validPoints; i++) {
+				for(int i=1; i<points; i++) {
 					if(data[i] >= 0) {
-						int start_y = (int) (pixels_per_y * (yOffset + i-1));
+						int start_y = (int) (pixels_per_y * (i-1));
 						int start_x = (int) (pixels_per_x * data[i-1]);
-						int end_y = (int) (pixels_per_y * (yOffset + i));
+						int end_y = (int) (pixels_per_y * (i));
 						int end_x = (int) (pixels_per_x * data[i]);
 						
 						g.drawLine(start_x, start_y, end_x, end_y);
