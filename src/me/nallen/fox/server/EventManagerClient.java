@@ -1,6 +1,7 @@
 package me.nallen.fox.server;
 
 import me.nallen.fox.server.eventmanager.DataEvent;
+import me.nallen.fox.server.eventmanager.Match;
 import me.nallen.fox.server.eventmanager.TcpClient;
 
 public class EventManagerClient implements me.nallen.fox.server.eventmanager.DataListener {
@@ -42,6 +43,12 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 
 				FoxServer.foxData.setPaused(true);
 			}
+		}
+		else if(e.getDataType().equals("6")) {
+			int[] queued_match = tcpClient.getQueuedMatch();
+			Match cur = tcpClient.getMatch(queued_match[0], queued_match[1], queued_match[2]);
+			
+			FoxServer.foxData.setThreeTeam(cur.getRed().length > 2);
 		}
 		else if(e.getDataType().equals("7")) {
 			//System.out.println("Log Data");
