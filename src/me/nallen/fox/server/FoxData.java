@@ -345,6 +345,46 @@ public class FoxData {
 		fireUpdate(UpdateType.TICK);
 	}
 	
+	public String getScoreFieldTitlesAsCsvLine() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Red Score,Blue Score,");
+		for(int i=0; i<redBaseCones.length; i++) {
+			builder.append(String.format("Red Mogo %d Cones,Red Mogo %d Zone,", i+1, i+1));
+		}
+		builder.append("Red Stationary Cones,");
+		builder.append("Red Auton,");
+		builder.append("Red Parking,");
+
+		for(int i=0; i<blueBaseCones.length; i++) {
+			builder.append(String.format("Blue Mogo %d Cones,Blue Mogo %d Zone,", i+1, i+1));
+		}
+		builder.append("Blue Stationary Cones,");
+		builder.append("Blue Auton,");
+		builder.append("Blue Parking");
+		
+		return builder.toString();
+	}
+	
+	public String getCurrentScoreFieldsAsCsvLine() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("%d,%d,", getRedScore(), getBlueScore()));
+		for(int i=0; i<redBaseCones.length; i++) {
+			builder.append(String.format("%d,%d,", redBaseCones[i], redBaseZones[i].getScore()));
+		}
+		builder.append(String.format("%d,", redStationaryCones));
+		builder.append(String.format("%d,", redAuton ? 1 : 0));
+		builder.append(String.format("%d,", redParking));
+		
+		for(int i=0; i<blueBaseCones.length; i++) {
+			builder.append(String.format("%d,%d,", blueBaseCones[i], blueBaseZones[i].getScore()));
+		}
+		builder.append(String.format("%d,", blueStationaryCones));
+		builder.append(String.format("%d,", blueAuton ? 1 : 0));
+		builder.append(String.format("%d", blueParking));
+		
+		return builder.toString();
+	}
+	
 	public void clear() {
 		Arrays.fill(redBaseCones, 0);
 		Arrays.fill(redBaseZones, ScoringZone.NONE);
