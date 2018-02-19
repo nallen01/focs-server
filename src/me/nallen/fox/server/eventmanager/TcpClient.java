@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -270,39 +271,65 @@ public class TcpClient {
 								boolean valid = false;
 								boolean valid_message = false;
 
-								if(parts[0].equals("2") && (parts.length % 12 == 2)) {
+								if(parts[0].equals("2")) {
+									int offset = 1;
 									valid = true;
-									receive_finished[0] = true;
-									
-									for(int i=0; i<matchlist.size(); i++) {
-										matchlist.get(i).clear();
-									}
-									for(int i=0; i< parts.length/12; i++) {
-										Date scheduled = new Date(Long.parseLong(parts[(1 + i*12)]));
-										int division = Integer.parseInt(parts[(2 + i*12)])-1;
-
-										if(division < divisions.size()) {
-											int new_type = Integer.parseInt(parts[(3 + i * 12)]);
-											int new_num = Integer.parseInt(parts[(5 + i * 12)]);
-											int new_round = Integer.parseInt(parts[(4 + i * 12)]);
-											int pos = limits.get(division)[new_type - 1] - 1;
-											while (pos++ < (matchlist.get(division).size() - 1)) {
-												if (matchlist.get(division).get(pos).getType() < new_type)
-													continue;
-												if (matchlist.get(division).get(pos).getType() > new_type)
-													break;
-												if (matchlist.get(division).get(pos).getRound() < new_round)
-													continue;
-												if (matchlist.get(division).get(pos).getRound() > new_round)
-													break;
-												if (matchlist.get(division).get(pos).getNum() < new_num)
-													continue;
-												if (matchlist.get(division).get(pos).getNum() > new_num)
-													break;
+									ArrayList<String> fixedParts = new ArrayList<>();
+									while(offset+12 < parts.length) {
+										if(parts[offset+11].isEmpty()) {
+											if(offset+13 > parts.length) {
+												valid = false;
+												break;
 											}
-											matchlist.get(division).add(pos, new Match(new_type, new_round, new_num, new int[]{Integer.parseInt(parts[(6 + i * 12)]), Integer.parseInt(parts[(7 + i * 12)]), Integer.parseInt(parts[(8 + i * 12)])}, new int[]{Integer.parseInt(parts[(9 + i * 12)]), Integer.parseInt(parts[(10 + i * 12)]), Integer.parseInt(parts[(11 + i * 12)])}, Integer.parseInt(parts[(12 + i * 12)]) - 1, scheduled));
-											for (int j = new_type; j < NUM_MATCH_TYPES; j++)
-												limits.get(division)[j]++;
+
+											fixedParts.addAll(Arrays.asList(parts).subList(offset, offset + 11));
+											fixedParts.add(parts[offset+12]);
+
+											offset += 13;
+										}
+										else {
+											fixedParts.addAll(Arrays.asList(parts).subList(offset, offset + 12));
+
+											offset += 12;
+										}
+									}
+
+									if(offset+1 < parts.length)
+										valid = false;
+
+									if(valid) {
+										receive_finished[0] = true;
+
+										for(int i=0; i<matchlist.size(); i++) {
+											matchlist.get(i).clear();
+										}
+										for(int i=0; i< fixedParts.size()/12; i++) {
+											Date scheduled = new Date(Long.parseLong(fixedParts.get(0 + i*12)));
+											int division = Integer.parseInt(fixedParts.get(1 + i*12))-1;
+
+											if(division < divisions.size()) {
+												int new_type = Integer.parseInt(fixedParts.get(2 + i * 12));
+												int new_num = Integer.parseInt(fixedParts.get(4 + i * 12));
+												int new_round = Integer.parseInt(fixedParts.get(3 + i * 12));
+												int pos = limits.get(division)[new_type - 1] - 1;
+												while (pos++ < (matchlist.get(division).size() - 1)) {
+													if (matchlist.get(division).get(pos).getType() < new_type)
+														continue;
+													if (matchlist.get(division).get(pos).getType() > new_type)
+														break;
+													if (matchlist.get(division).get(pos).getRound() < new_round)
+														continue;
+													if (matchlist.get(division).get(pos).getRound() > new_round)
+														break;
+													if (matchlist.get(division).get(pos).getNum() < new_num)
+														continue;
+													if (matchlist.get(division).get(pos).getNum() > new_num)
+														break;
+												}
+												matchlist.get(division).add(pos, new Match(new_type, new_round, new_num, new int[]{Integer.parseInt(fixedParts.get(5 + i * 12)), Integer.parseInt(fixedParts.get(6 + i * 12)), Integer.parseInt(fixedParts.get(7 + i * 12))}, new int[]{Integer.parseInt(fixedParts.get(8 + i * 12)), Integer.parseInt(fixedParts.get(9 + i * 12)), Integer.parseInt(fixedParts.get(10 + i * 12))}, Integer.parseInt(fixedParts.get(11 + i * 12)) - 1, scheduled));
+												for (int j = new_type; j < NUM_MATCH_TYPES; j++)
+													limits.get(division)[j]++;
+											}
 										}
 									}
 								}
