@@ -31,24 +31,16 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 					FoxServer.foxData.clear();
 					FoxServer.tcpServer.clearAll();
 					hasStartedMatch = true;
-					
-					System.out.println("Start Match");
 				}
 
 				FoxServer.foxData.setPaused(false);
-				
-				System.out.println("Resuming graph");
 			}
 			else {
 				if(mode[1] == 1) {
 					hasStartedMatch = false;
-					
-					System.out.println("End Match");
 				}
 
 				FoxServer.foxData.setPaused(true);
-				
-				System.out.println("Pausing graph");
 			}
 		}
 		else if(e.getDataType().equals("7")) {
@@ -65,8 +57,6 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 				FoxServer.foxData.setBlueAuton(false);
 				FoxServer.foxData.setRedAuton(false);
 			}
-			
-			System.out.println("Auton winner set");
 		}
 	}
 }
