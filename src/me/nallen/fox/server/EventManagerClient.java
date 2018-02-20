@@ -1,7 +1,13 @@
 package me.nallen.fox.server;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -17,6 +23,8 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 	
 	private TcpClient tcpClient;
 	
+	private URL uploadUrl = null;
+	
 	private Boolean hasStartedMatch = false;
 	private String prevMatchName = null;
 	private StringBuilder scoreLogBuilder = new StringBuilder();
@@ -26,7 +34,11 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 	public EventManagerClient() {
 	}
 	
-	public void connect(String ip, String username, String password) throws Exception {
+	public void connect(String ip, String username, String password, String uploadUrl) throws Exception {
+		try {
+			this.uploadUrl = new URL(uploadUrl);
+		} catch (MalformedURLException e1) { }
+		
 		tcpClient = new TcpClient();
 		Boolean result = tcpClient.login(ip, username, tcpClient.encryptPassword(password));
 		
@@ -53,15 +65,42 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 		tcpClient.addDataListener(this);
 	}
 	
+	private void sendToRemote() {
+		new Thread(new Runnable(){
+			@Override
+			public void run(){
+				System.out.println("Sending");
+				if(uploadUrl != null) {
+					try {
+						byte[] data = Files.readAllBytes(Paths.get("scores.csv"));
+						
+						HttpURLConnection conn = (HttpURLConnection) uploadUrl.openConnection();
+						conn.setDoOutput(true);
+						conn.setRequestMethod("POST");
+						conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+						conn.setRequestProperty("charset",  "utf-8");
+						conn.setRequestProperty("Content-Length", Integer.toString(data.length));
+						try(DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
+							wr.write(data);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+		
+	}
+	
 	private void writeLogToFile() {
-		System.out.println("Running");
 		if(lastTimerValue == 0) {
-			System.out.println("Writing");
 			scoreLogBuilder.append(prevMatchName + ",0," + FoxServer.foxData.getCurrentScoreFieldsAsCsvLine() + "\n");
 			
 			try {
 				Files.write(Paths.get("scores.csv"), scoreLogBuilder.toString().getBytes(), StandardOpenOption.APPEND);
 			} catch (IOException e1) { }
+			
+			sendToRemote();
 
 			scoreLogBuilder.setLength(0);
 			lastTimerValue = -1;

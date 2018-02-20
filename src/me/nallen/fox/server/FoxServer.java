@@ -31,6 +31,7 @@ public class FoxServer {
 		String ip = null;
 		String user = null;
 		String password = null;
+		String uploadUrl = null;
 		
 		try {
 			File file = new File("automation.cfg");
@@ -46,6 +47,9 @@ public class FoxServer {
 
 					else if(line.startsWith("password:"))
 						password = line.substring(9).trim();
+
+					else if(line.startsWith("uploadUrl:"))
+						uploadUrl = line.substring(10).trim();
 				}
 			}
 		}
@@ -54,7 +58,7 @@ public class FoxServer {
 		if(ip != null && user != null && password != null) {
 			try {
 				emClient = new EventManagerClient();
-				emClient.connect(ip, user, password);
+				emClient.connect(ip, user, password, uploadUrl);
 			}
 			catch(Exception e) {
 				e.printStackTrace();
