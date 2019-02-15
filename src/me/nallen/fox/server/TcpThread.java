@@ -7,7 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-import me.nallen.fox.server.FoxData.ScoringZone;
+import me.nallen.fox.server.FoxData.ParkingState;
+import me.nallen.fox.server.FoxData.ToggleState;
 
 public class TcpThread extends Thread implements DataListener {
     private Socket socket = null;
@@ -15,29 +16,27 @@ public class TcpThread extends Thread implements DataListener {
     private BufferedWriter out = null;
     
     public enum ScoreField {
-		RED_BASE_ONE_CONES(0),
-		RED_BASE_TWO_CONES(1),
-		RED_BASE_THREE_CONES(2),
-		RED_BASE_FOUR_CONES(3),
-		RED_BASE_ONE_ZONE(4),
-		RED_BASE_TWO_ZONE(5),
-		RED_BASE_THREE_ZONE(6),
-		RED_BASE_FOUR_ZONE(7),
-		RED_STATIONARY_CONES(8),
-		RED_PARKING(9),
-		RED_AUTON(10),
-
-		BLUE_BASE_ONE_CONES(11),
-		BLUE_BASE_TWO_CONES(12),
-		BLUE_BASE_THREE_CONES(13),
-		BLUE_BASE_FOUR_CONES(14),
-		BLUE_BASE_ONE_ZONE(15),
-		BLUE_BASE_TWO_ZONE(16),
-		BLUE_BASE_THREE_ZONE(17),
-		BLUE_BASE_FOUR_ZONE(18),
-		BLUE_STATIONARY_CONES(19),
-		BLUE_PARKING(20),
-		BLUE_AUTON(21),
+		HIGH_FLAG_1_1(0),
+		HIGH_FLAG_1_2(1),
+		HIGH_FLAG_1_3(2),
+		HIGH_FLAG_2_1(3),
+		HIGH_FLAG_2_2(4),
+		HIGH_FLAG_2_3(5),
+		LOW_FLAG_1(6),
+		LOW_FLAG_2(7),
+		LOW_FLAG_3(8),
+		
+		RED_HIGH_CAPS(9),
+		RED_LOW_CAPS(10),
+		RED_PARKING_1(11),
+		RED_PARKING_2(12),
+		RED_AUTON(13),
+		
+		BLUE_HIGH_CAPS(14),
+		BLUE_LOW_CAPS(15),
+		BLUE_PARKING_1(16),
+		BLUE_PARKING_2(17),
+		BLUE_AUTON(18),
     	
     	PAUSED(22),
     	HISTORY(23),
@@ -113,30 +112,30 @@ public class TcpThread extends Thread implements DataListener {
 		    if(out != null) {
 		    	sendMessage("1");
 		    	
+
+		    	sendFoxCommand(ScoreField.HIGH_FLAG_1_1, MessageType.SET, FoxServer.foxData.getHighFlag(0, 0).getValue());
+		    	sendFoxCommand(ScoreField.HIGH_FLAG_1_2, MessageType.SET, FoxServer.foxData.getHighFlag(0, 1).getValue());
+		    	sendFoxCommand(ScoreField.HIGH_FLAG_1_3, MessageType.SET, FoxServer.foxData.getHighFlag(0, 2).getValue());
+		    	sendFoxCommand(ScoreField.HIGH_FLAG_2_1, MessageType.SET, FoxServer.foxData.getHighFlag(1, 0).getValue());
+		    	sendFoxCommand(ScoreField.HIGH_FLAG_2_2, MessageType.SET, FoxServer.foxData.getHighFlag(1, 1).getValue());
+		    	sendFoxCommand(ScoreField.HIGH_FLAG_2_3, MessageType.SET, FoxServer.foxData.getHighFlag(1, 2).getValue());
+		    	
+		    	sendFoxCommand(ScoreField.LOW_FLAG_1, MessageType.SET, FoxServer.foxData.getLowFlag(0).getValue());
+		    	sendFoxCommand(ScoreField.LOW_FLAG_2, MessageType.SET, FoxServer.foxData.getLowFlag(1).getValue());
+		    	sendFoxCommand(ScoreField.LOW_FLAG_3, MessageType.SET, FoxServer.foxData.getLowFlag(2).getValue());
+		    	
 		    	sendFoxCommand(ScoreField.RED_AUTON, MessageType.SET, FoxServer.foxData.getRedAuton() ? 1 : 0);
-		    	sendFoxCommand(ScoreField.RED_BASE_ONE_CONES, MessageType.SET, FoxServer.foxData.getRedBaseCones(0));
-		    	sendFoxCommand(ScoreField.RED_BASE_TWO_CONES, MessageType.SET, FoxServer.foxData.getRedBaseCones(1));
-		    	sendFoxCommand(ScoreField.RED_BASE_THREE_CONES, MessageType.SET, FoxServer.foxData.getRedBaseCones(2));
-		    	sendFoxCommand(ScoreField.RED_BASE_FOUR_CONES, MessageType.SET, FoxServer.foxData.getRedBaseCones(3));
-		    	sendFoxCommand(ScoreField.RED_BASE_ONE_ZONE, MessageType.SET, FoxServer.foxData.getRedBaseZone(0).getValue());
-		    	sendFoxCommand(ScoreField.RED_BASE_TWO_ZONE, MessageType.SET, FoxServer.foxData.getRedBaseZone(1).getValue());
-		    	sendFoxCommand(ScoreField.RED_BASE_THREE_ZONE, MessageType.SET, FoxServer.foxData.getRedBaseZone(2).getValue());
-		    	sendFoxCommand(ScoreField.RED_BASE_FOUR_ZONE, MessageType.SET, FoxServer.foxData.getRedBaseZone(3).getValue());
-		    	sendFoxCommand(ScoreField.RED_STATIONARY_CONES, MessageType.SET, FoxServer.foxData.getRedStationaryCones());
-		    	sendFoxCommand(ScoreField.RED_PARKING, MessageType.SET, FoxServer.foxData.getRedParking());
+		    	sendFoxCommand(ScoreField.RED_HIGH_CAPS, MessageType.SET, FoxServer.foxData.getRedHighCaps());
+		    	sendFoxCommand(ScoreField.RED_LOW_CAPS, MessageType.SET, FoxServer.foxData.getRedLowCaps());
+		    	sendFoxCommand(ScoreField.RED_PARKING_1, MessageType.SET, FoxServer.foxData.getRedParking(0).getValue());
+		    	sendFoxCommand(ScoreField.RED_PARKING_2, MessageType.SET, FoxServer.foxData.getRedParking(1).getValue());
 		    	
 		    	sendFoxCommand(ScoreField.BLUE_AUTON, MessageType.SET, FoxServer.foxData.getBlueAuton() ? 1 : 0);
-		    	sendFoxCommand(ScoreField.BLUE_BASE_ONE_CONES, MessageType.SET, FoxServer.foxData.getBlueBaseCones(0));
-		    	sendFoxCommand(ScoreField.BLUE_BASE_TWO_CONES, MessageType.SET, FoxServer.foxData.getBlueBaseCones(1));
-		    	sendFoxCommand(ScoreField.BLUE_BASE_THREE_CONES, MessageType.SET, FoxServer.foxData.getBlueBaseCones(2));
-		    	sendFoxCommand(ScoreField.BLUE_BASE_FOUR_CONES, MessageType.SET, FoxServer.foxData.getBlueBaseCones(3));
-		    	sendFoxCommand(ScoreField.BLUE_BASE_ONE_ZONE, MessageType.SET, FoxServer.foxData.getBlueBaseZone(0).getValue());
-		    	sendFoxCommand(ScoreField.BLUE_BASE_TWO_ZONE, MessageType.SET, FoxServer.foxData.getBlueBaseZone(1).getValue());
-		    	sendFoxCommand(ScoreField.BLUE_BASE_THREE_ZONE, MessageType.SET, FoxServer.foxData.getBlueBaseZone(2).getValue());
-		    	sendFoxCommand(ScoreField.BLUE_BASE_FOUR_ZONE, MessageType.SET, FoxServer.foxData.getBlueBaseZone(3).getValue());
-		    	sendFoxCommand(ScoreField.BLUE_STATIONARY_CONES, MessageType.SET, FoxServer.foxData.getBlueStationaryCones());
-		    	sendFoxCommand(ScoreField.BLUE_PARKING, MessageType.SET, FoxServer.foxData.getBlueParking());
-
+		    	sendFoxCommand(ScoreField.BLUE_HIGH_CAPS, MessageType.SET, FoxServer.foxData.getBlueHighCaps());
+		    	sendFoxCommand(ScoreField.BLUE_LOW_CAPS, MessageType.SET, FoxServer.foxData.getBlueLowCaps());
+		    	sendFoxCommand(ScoreField.BLUE_PARKING_1, MessageType.SET, FoxServer.foxData.getBlueParking(0).getValue());
+		    	sendFoxCommand(ScoreField.BLUE_PARKING_2, MessageType.SET, FoxServer.foxData.getBlueParking(1).getValue());
+		    	
 			    FoxServer.foxData.addListener(this);
 		    	
 		    	// Loop for messages from the client
@@ -152,122 +151,93 @@ public class TcpThread extends Thread implements DataListener {
 		    					MessageType type = MessageType.fromInt(Integer.parseInt(parts[1]));
 		    					int num = Integer.parseInt(parts[2]);
 		    					
-		    					if(field == ScoreField.RED_BASE_ONE_CONES
-		    							|| field == ScoreField.RED_BASE_TWO_CONES
-		    							|| field == ScoreField.RED_BASE_THREE_CONES
-		    							|| field == ScoreField.RED_BASE_FOUR_CONES) {
-		    						int index = 0;
+		    					if(field == ScoreField.HIGH_FLAG_1_1
+		    							|| field == ScoreField.HIGH_FLAG_1_2
+		    							|| field == ScoreField.HIGH_FLAG_1_3
+		    							|| field == ScoreField.HIGH_FLAG_2_1
+		    							|| field == ScoreField.HIGH_FLAG_2_2
+		    							|| field == ScoreField.HIGH_FLAG_2_3) {
+		    						int row = 0;
+		    						int col = 0;
 		    						switch(field) {
-			    						case RED_BASE_ONE_CONES: index = 0; break;
-			    						case RED_BASE_TWO_CONES: index = 1; break;
-			    						case RED_BASE_THREE_CONES: index = 2; break;
-			    						case RED_BASE_FOUR_CONES: index = 3; break;
+			    						case HIGH_FLAG_1_1: row = 0; col = 0; break;
+			    						case HIGH_FLAG_1_2: row = 0; col = 1; break;
+			    						case HIGH_FLAG_1_3: row = 0; col = 2; break;
+			    						case HIGH_FLAG_2_1: row = 1; col = 0; break;
+			    						case HIGH_FLAG_2_2: row = 1; col = 1; break;
+			    						case HIGH_FLAG_2_3: row = 1; col = 2; break;
 			    						default: break;
 		    						}
 		    						
-		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedBaseCones(index) + num;
-		    						}
-		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedBaseCones(index) - num;
-		    						}
-		    						
-	    							FoxServer.foxData.setRedBaseCones(index, num);
+	    							FoxServer.foxData.setHighFlag(row, col, ToggleState.fromInt(num));
 		    					}
-		    					if(field == ScoreField.RED_BASE_ONE_ZONE
-		    							|| field == ScoreField.RED_BASE_TWO_ZONE
-		    							|| field == ScoreField.RED_BASE_THREE_ZONE
-		    							|| field == ScoreField.RED_BASE_FOUR_ZONE) {
-		    						int index = 0;
+		    					else if(field == ScoreField.LOW_FLAG_1
+		    							|| field == ScoreField.LOW_FLAG_2
+		    							|| field == ScoreField.LOW_FLAG_3) {
+		    						int col = 0;
 		    						switch(field) {
-			    						case RED_BASE_ONE_ZONE: index = 0; break;
-			    						case RED_BASE_TWO_ZONE: index = 1; break;
-			    						case RED_BASE_THREE_ZONE: index = 2; break;
-			    						case RED_BASE_FOUR_ZONE: index = 3; break;
+			    						case LOW_FLAG_1: col = 0; break;
+			    						case LOW_FLAG_2: col = 1; break;
+			    						case LOW_FLAG_3: col = 2; break;
 			    						default: break;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedBaseZone(index, ScoringZone.fromInt(num));
+	    							FoxServer.foxData.setLowFlag(col, ToggleState.fromInt(num));
 		    					}
-		    					else if(field == ScoreField.RED_STATIONARY_CONES) {
+		    					else if(field == ScoreField.RED_HIGH_CAPS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedStationaryCones() + num;
+		    							num = FoxServer.foxData.getRedHighCaps() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedStationaryCones() - num;
+		    							num = FoxServer.foxData.getRedHighCaps() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedStationaryCones(num);
+	    							FoxServer.foxData.setRedHighCaps(num);
 		    					}
-		    					else if(field == ScoreField.RED_PARKING) {
+		    					else if(field == ScoreField.RED_LOW_CAPS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedParking() + num;
+		    							num = FoxServer.foxData.getRedLowCaps() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedParking() - num;
+		    							num = FoxServer.foxData.getRedLowCaps() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedParking(num);
+	    							FoxServer.foxData.setRedLowCaps(num);
+		    					}
+		    					else if(field == ScoreField.RED_PARKING_1) {
+	    							FoxServer.foxData.setRedParking(0, ParkingState.fromInt(num));
+		    					}
+		    					else if(field == ScoreField.RED_PARKING_2) {
+	    							FoxServer.foxData.setRedParking(1, ParkingState.fromInt(num));
 		    					}
 		    					else if(field == ScoreField.RED_AUTON) {
 	    							FoxServer.foxData.setRedAuton(num > 0);
 		    					}
-		    					else if(field == ScoreField.BLUE_BASE_ONE_CONES
-		    							|| field == ScoreField.BLUE_BASE_TWO_CONES
-		    							|| field == ScoreField.BLUE_BASE_THREE_CONES
-		    							|| field == ScoreField.BLUE_BASE_FOUR_CONES) {
-		    						int index = 0;
-		    						switch(field) {
-			    						case BLUE_BASE_ONE_CONES: index = 0; break;
-			    						case BLUE_BASE_TWO_CONES: index = 1; break;
-			    						case BLUE_BASE_THREE_CONES: index = 2; break;
-			    						case BLUE_BASE_FOUR_CONES: index = 3; break;
-			    						default: break;
-		    						}
-		    						
+		    					else if(field == ScoreField.BLUE_HIGH_CAPS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueBaseCones(index) + num;
+		    							num = FoxServer.foxData.getBlueHighCaps() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueBaseCones(index) - num;
+		    							num = FoxServer.foxData.getBlueHighCaps() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setBlueBaseCones(index, num);
+	    							FoxServer.foxData.setBlueHighCaps(num);
 		    					}
-		    					if(field == ScoreField.BLUE_BASE_ONE_ZONE
-		    							|| field == ScoreField.BLUE_BASE_TWO_ZONE
-		    							|| field == ScoreField.BLUE_BASE_THREE_ZONE
-		    							|| field == ScoreField.BLUE_BASE_FOUR_ZONE) {
-		    						int index = 0;
-		    						switch(field) {
-			    						case BLUE_BASE_ONE_ZONE: index = 0; break;
-			    						case BLUE_BASE_TWO_ZONE: index = 1; break;
-			    						case BLUE_BASE_THREE_ZONE: index = 2; break;
-			    						case BLUE_BASE_FOUR_ZONE: index = 3; break;
-			    						default: break;
-		    						}
-		    						
-	    							FoxServer.foxData.setBlueBaseZone(index, ScoringZone.fromInt(num));
-		    					}
-		    					else if(field == ScoreField.BLUE_STATIONARY_CONES) {
+		    					else if(field == ScoreField.BLUE_LOW_CAPS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueStationaryCones() + num;
+		    							num = FoxServer.foxData.getBlueLowCaps() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueStationaryCones() - num;
+		    							num = FoxServer.foxData.getBlueLowCaps() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setBlueStationaryCones(num);
+	    							FoxServer.foxData.setBlueLowCaps(num);
 		    					}
-		    					else if(field == ScoreField.BLUE_PARKING) {
-		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueParking() + num;
-		    						}
-		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueParking() - num;
-		    						}
-		    						
-	    							FoxServer.foxData.setBlueParking(num);
+		    					else if(field == ScoreField.BLUE_PARKING_1) {
+	    							FoxServer.foxData.setBlueParking(0, ParkingState.fromInt(num));
+		    					}
+		    					else if(field == ScoreField.BLUE_PARKING_2) {
+	    							FoxServer.foxData.setBlueParking(1, ParkingState.fromInt(num));
 		    					}
 		    					else if(field == ScoreField.BLUE_AUTON) {
 	    							FoxServer.foxData.setBlueAuton(num > 0);
