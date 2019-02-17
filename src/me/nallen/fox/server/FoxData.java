@@ -137,10 +137,10 @@ public class FoxData {
 		}
 	}
 	
-	public ToggleState getHighFlag(int column, int row) {
+	public ToggleState getHighFlag(int row, int column) {
 		return this.highFlags[row][column];
 	}
-	public void setHighFlag(int column, int row, ToggleState toggleState) {
+	public void setHighFlag(int row, int column, ToggleState toggleState) {
 		this.highFlags[row][column] = toggleState;
 		fireUpdate(UpdateType.SCORE);
 	}
@@ -440,13 +440,13 @@ public class FoxData {
 		lowFlags[2] = ToggleState.RED;
 		
 		redHighCaps = 0;
-		redLowCaps = 4;
+		redLowCaps = 2;
 		Arrays.fill(redParking, ParkingState.NONE);
 		redAuton = false;
 		
 
 		blueHighCaps = 0;
-		blueLowCaps = 4;
+		blueLowCaps = 2;
 		Arrays.fill(blueParking, ParkingState.NONE);
 		blueAuton = false;
 		
