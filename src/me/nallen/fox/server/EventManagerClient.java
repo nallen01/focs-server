@@ -12,6 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import me.nallen.fox.server.FoxData.AutonWinner;
 import me.nallen.fox.server.eventmanager.DataEvent;
 import me.nallen.fox.server.eventmanager.Match;
 import me.nallen.fox.server.eventmanager.TcpClient;
@@ -143,14 +144,16 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 	private void updateAutonWinner() {
 		if(lastTimerValue > 0) {
 			if(tcpClient.getAutonWinner() == TcpClient.AUTON_BLUE) {
-				FoxServer.foxData.setBlueAuton(true);
+				FoxServer.foxData.setAutonWinner(AutonWinner.BLUE);
 			}
 			else if(tcpClient.getAutonWinner() == TcpClient.AUTON_RED) {
-				FoxServer.foxData.setRedAuton(true);
+				FoxServer.foxData.setAutonWinner(AutonWinner.RED);
+			}
+			else if(tcpClient.getAutonWinner() == TcpClient.AUTON_TIE) {
+				FoxServer.foxData.setAutonWinner(AutonWinner.TIE);
 			}
 			else {
-				FoxServer.foxData.setBlueAuton(false);
-				FoxServer.foxData.setRedAuton(false);
+				FoxServer.foxData.setAutonWinner(AutonWinner.NONE);
 			}	
 		}
 	}

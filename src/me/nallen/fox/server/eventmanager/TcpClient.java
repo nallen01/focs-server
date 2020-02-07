@@ -50,6 +50,7 @@ public class TcpClient {
 	public static final int AUTON_RED = 2;
 	public static final int AUTON_NONE = 1;
 	public static final int AUTON_BLUE = 3;
+	public static final int AUTON_TIE = 4;
 	
 
 	private static final int SOCKET_TIMEOUT_MS = 1000;
