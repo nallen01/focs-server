@@ -31,7 +31,6 @@ import javax.swing.SwingConstants;
 
 public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
-	private static final Color chromaColor = new Color(255, 0, 255);
 	private static final Color redColor = new Color(218, 38, 46);
 	private static final Color blueColor = new Color(0, 118, 190);
 	private static final Color whiteColor = new Color(255, 255, 255);
@@ -78,6 +77,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	public boolean isFullScreen = false;
 	public Dimension priorDimension = null;
 	public Point priorLocation = null;
+	private Color chromaColor = new Color(255, 0, 255);
 	
 	private GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 	
@@ -98,7 +98,14 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	}
 	
 	public FoxGui() {
+		this(null);
+	}
+	
+	public FoxGui(Color customChromaColor) {
 		super("The Fox");
+
+		if(customChromaColor != null)
+			this.chromaColor = customChromaColor;
 		
 		getContentPane().setBackground(chromaColor);
 		getContentPane().setPreferredSize(new Dimension(1280, 720));
