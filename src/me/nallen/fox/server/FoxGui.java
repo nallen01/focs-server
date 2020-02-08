@@ -70,7 +70,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_DIVIDER_X = 0.05;
 	private static final double MAIN_BOX_DIVIDER_WIDTH = 0.9;
 	
-	private static final int GRAPH_MAX_Y_VALUE = 120;
+	private static final int GRAPH_MAX_Y_VALUE_MIN = 40;
 	private static final double GRAPH_LINE_WIDTH = 0.006;
 	private static final double GRAPH_VERTICAL_LINE_WIDTH = 0.02;
 	
@@ -278,6 +278,12 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    FoxServer.foxData.addListener(this);
 	}
 	
+	private int getMaxYValue() {
+		int maxPoint = Math.max(GRAPH_MAX_Y_VALUE_MIN, FoxServer.foxData.getMaxScore());
+		
+		return maxPoint;
+	}
+	
 	private void paintGraph(JPanel p, Graphics2D g, Color c, int[] points) {
 		int width = p.getWidth();
 		int height = p.getHeight() - 1;
@@ -289,7 +295,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			line_width = 1;
 		g.setStroke(new BasicStroke(line_width));
 		
-		double pixels_per_y = ((double) height) / GRAPH_MAX_Y_VALUE;
+		double pixels_per_y = ((double) height) / getMaxYValue();
 		double pixels_per_x = ((double) width) / (FoxData.NUM_HISTORY_POINTS - 1);
 		
 		for(int i=1; i<points.length; i++) {
@@ -378,7 +384,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			}
 		}
 		else {
-			double pixels_per_x = ((double) width) / GRAPH_MAX_Y_VALUE;
+			double pixels_per_x = ((double) width) / getMaxYValue();
 			
 			for(int c=0; c<2; c++) {
 				int[] data = c == 0 ? redPoints : bluePoints;

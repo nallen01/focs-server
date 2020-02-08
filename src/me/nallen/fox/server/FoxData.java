@@ -256,6 +256,38 @@ public class FoxData {
 		return score;
 	}
 	
+	public int getMaxRedScore() {
+		int max = 0;
+		
+		for(int i=0; i<redScoreHistory.length; i++) {
+			if(redScoreHistory[i] > max)
+				max = redScoreHistory[i];
+		}
+		
+		return max;
+	}
+	
+	public int getMaxBlueScore() {
+		int max = 0;
+		
+		for(int i=0; i<blueScoreHistory.length; i++) {
+			if(blueScoreHistory[i] > max)
+				max = blueScoreHistory[i];
+		}
+		
+		return max;
+	}
+	
+	public int getMaxScore() {
+		int red = getMaxRedScore();
+		int blue = getMaxBlueScore();
+		
+		if(red > blue)
+			return red;
+		
+		return blue;
+	}
+	
 	public int[] getRedScoreHistory() {
 		int[] returnArray = new int[NUM_HISTORY_POINTS];
 		
