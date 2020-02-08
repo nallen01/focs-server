@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Window;
@@ -18,16 +17,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import me.nallen.fox.server.FoxData.HistoryMethod;
 
 public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final long serialVersionUID = 1L;
@@ -69,6 +67,17 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final int[] MAIN_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
 	private static final double MAIN_BOX_DIVIDER_X = 0.05;
 	private static final double MAIN_BOX_DIVIDER_WIDTH = 0.9;
+
+	private static final double FULL_BOX_WIDTH = 1860.0 / 1920;
+	private static final double FULL_BOX_HEIGHT = 714.0 / 1080;
+	private static final double FULL_BOX_HEIGHT_SHORT = 674.0 / 1080;
+	private static final double FULL_BOX_X = 30.0 / 1920;
+	private static final double FULL_BOX_Y = 182.0 / 1080;
+	private static final double FULL_BOX_X_CURVE = 0.015;
+	private static final double FULL_BOX_Y_CURVE = 0.03;
+	private static final int[] FULL_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
+	private static final double FULL_BOX_DIVIDER_Y = 0.05;
+	private static final double FULL_BOX_DIVIDER_HEIGHT = 0.9;
 	
 	private static final int GRAPH_MAX_Y_VALUE_MIN = 40;
 	private static final double GRAPH_LINE_WIDTH = 0.006;
@@ -196,7 +205,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	           
 	            graphics.setColor(whiteColor);
 	           
-	            if(FoxServer.foxData.getLargeHistory()) {
+	            if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.SIDE) {
 				    graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, MAIN_BOX_X_CURVE * width, MAIN_BOX_Y_CURVE * height));
 				   
 				    graphics.setColor(grayColor);
@@ -216,11 +225,32 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 							graphics.drawLine(start_x, y, end_x, y);
 						}
 					}
-	           }
-	           else {
-		           graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
-		           graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_X_CURVE * width, height));
-	           }
+	            }
+	            else if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.FULL) {
+	            	graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, FULL_BOX_X_CURVE * width, FULL_BOX_Y_CURVE * height));
+					   
+				    graphics.setColor(grayColor);
+					float line_width = (float) (GRAPH_LINE_WIDTH * height);
+					if(line_width < 1)
+						line_width = 1;
+					graphics.setStroke(new BasicStroke(line_width));
+					
+					double pixels_per_sec = ((double) width) / FoxData.HISTORY_SECONDS;
+					int start_y = (int) (FULL_BOX_DIVIDER_Y * height);
+					int end_y = (int) ((FULL_BOX_DIVIDER_Y + FULL_BOX_DIVIDER_HEIGHT) * height);
+	
+					for(int i=0; i<FULL_BOX_DIVIDERS_SECONDS.length; i++) {
+						if(FULL_BOX_DIVIDERS_SECONDS[i] < FoxData.HISTORY_SECONDS
+								&& FULL_BOX_DIVIDERS_SECONDS[i] > 0) {
+							int x = (int) (pixels_per_sec * FULL_BOX_DIVIDERS_SECONDS[i]);
+							graphics.drawLine(x, start_y, x, end_y);
+						}
+					}
+	            }
+	            else if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.CORNER) {
+	            	graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
+	            	graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_X_CURVE * width, height));
+	            }
 	        }
 	    };
 	    historyPanel.setOpaque(false);
@@ -233,10 +263,11 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    	protected void paintComponent(Graphics g) {
 	    		super.paintComponent(g);
 
-				if(FoxServer.foxData.getLargeHistory()) {
+				if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.SIDE) {
 					paintGraphVertical(this, (Graphics2D) g, FoxServer.foxData.getRedScoreHistory(), FoxServer.foxData.getBlueScoreHistory());
 				}
-				else {
+				else if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.CORNER
+						|| FoxServer.foxData.getHistoryMethod() == HistoryMethod.FULL) {
 					paintGraph(this, (Graphics2D) g, redColor, FoxServer.foxData.getRedScoreHistory());
 					paintGraph(this, (Graphics2D) g, blueColor, FoxServer.foxData.getBlueScoreHistory());
 				}
@@ -281,7 +312,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private int getMaxYValue() {
 		int maxPoint = Math.max(GRAPH_MAX_Y_VALUE_MIN, FoxServer.foxData.getMaxScore());
 		
-		return maxPoint;
+		return maxPoint + 1;
 	}
 	
 	private void paintGraph(JPanel p, Graphics2D g, Color c, int[] points) {
@@ -494,8 +525,8 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	    blueScore.setBounds(0, 0, blueScorePanel.getWidth(), blueScorePanel.getHeight());
 	    blueScore.setFont(new Font(blueScore.getFont().getFontName(), Font.BOLD, (int) (SCORE_BOX_FONT*blueScorePanel.getWidth())));
 
-	    if(FoxServer.foxData.getShowHistory()) {
-	    	if(FoxServer.foxData.getLargeHistory()) {
+	    if(FoxServer.foxData.getHistoryMethod() != HistoryMethod.NONE) {
+	    	if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.SIDE) {
 			    int middle_box_width = (int) (MAIN_BOX_WIDTH * width);
 			    int middle_box_height = (int) (MAIN_BOX_HEIGHT * height);
 			    if(FoxServer.foxData.getThreeTeam()) {
@@ -506,7 +537,18 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 			    
 			    historyPanel.setBounds(middle_box_x, middle_box_y, middle_box_width, middle_box_height);
 	    	}
-	    	else {
+	    	if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.FULL) {
+			    int middle_box_width = (int) (FULL_BOX_WIDTH * width);
+			    int middle_box_height = (int) (FULL_BOX_HEIGHT * height);
+			    if(FoxServer.foxData.getThreeTeam()) {
+			    	middle_box_height = (int) (FULL_BOX_HEIGHT_SHORT * height);
+			    }
+			    int middle_box_x = (int) (FULL_BOX_X * width);
+			    int middle_box_y = (int) (FULL_BOX_Y * height);
+			    
+			    historyPanel.setBounds(middle_box_x, middle_box_y, middle_box_width, middle_box_height);
+	    	}
+	    	else if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.CORNER) {
 			    int top_box_width = (int) (TOP_BOX_WIDTH * width);
 			    int top_box_height = (int) (TOP_BOX_HEIGHT * height);
 			    int top_box_x = (int) (TOP_BOX_SIDE_OFFSET * width);

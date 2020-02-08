@@ -38,13 +38,31 @@ public class FoxData {
 	
 	private boolean isPaused = false;
 	
-	private boolean showHistory = true;
-	private boolean largeHistory = true;
+	private HistoryMethod historyMethod = HistoryMethod.SIDE;
 	private boolean isHidden = false;
 	
 	private boolean isThreeTeam = false;
 
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
+	
+	public enum HistoryMethod {
+		NONE(0),
+	    CORNER(1),
+	    SIDE(2),
+	    FULL(3);
+		
+		private final int id;
+		HistoryMethod(int id) { this.id = id; }
+		public int getValue() { return id; }
+		public static HistoryMethod fromInt(int id) {
+			HistoryMethod[] values = HistoryMethod.values();
+            for(int i=0; i<values.length; i++) {
+                if(values[i].getValue() == id)
+                    return values[i];
+            }
+            return null;
+		}
+	}
 	
 	public enum CubeType {
 	    NONE(0),
@@ -94,12 +112,8 @@ public class FoxData {
 		}, 0, HISTORY_MILLISECONDS, TimeUnit.MILLISECONDS);
 	}
 	
-	public boolean getLargeHistory() {
-		return largeHistory;
-	}
-	
-	public boolean getShowHistory() {
-		return showHistory;
+	public HistoryMethod getHistoryMethod() {
+		return historyMethod;
 	}
 	
 	public boolean getHidden() {
@@ -192,13 +206,8 @@ public class FoxData {
 		fireUpdate(UpdateType.SETTING);
 	}
 	
-	public void setShowHistory(boolean show) {
-		this.showHistory = show;
-		fireUpdate(UpdateType.SETTING);
-	}
-	
-	public void setLargeHistory(boolean large) {
-		this.largeHistory = large;
+	public void setHistoryMethod(HistoryMethod method) {
+		this.historyMethod = method;
 		fireUpdate(UpdateType.SETTING);
 	}
 	

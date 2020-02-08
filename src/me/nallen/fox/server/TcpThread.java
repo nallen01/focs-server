@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import me.nallen.fox.server.FoxData.AutonWinner;
 import me.nallen.fox.server.FoxData.CubeType;
+import me.nallen.fox.server.FoxData.HistoryMethod;
 
 public class TcpThread extends Thread implements DataListener {
     private Socket socket = null;
@@ -35,8 +36,7 @@ public class TcpThread extends Thread implements DataListener {
 		BLUE_PURPLE_CUBES(13),
     	
     	PAUSED(22),
-    	HISTORY(23),
-    	LARGE_HISTORY(24),
+    	HISTORY_METHOD(23),
     	HIDE(25),
     	
     	THREE_TEAM(26),
@@ -230,11 +230,8 @@ public class TcpThread extends Thread implements DataListener {
 		    					else if(field == ScoreField.PAUSED) {
 	    							FoxServer.foxData.setPaused(num > 0);
 		    					}
-		    					else if(field == ScoreField.HISTORY) {
-	    							FoxServer.foxData.setShowHistory(num > 0);
-		    					}
-		    					else if(field == ScoreField.LARGE_HISTORY) {
-	    							FoxServer.foxData.setLargeHistory(num > 0);
+		    					else if(field == ScoreField.HISTORY_METHOD) {
+	    							FoxServer.foxData.setHistoryMethod(HistoryMethod.fromInt(num));
 		    					}
 		    					else if(field == ScoreField.CLEAR) {
 		    						FoxServer.foxData.clear();
