@@ -358,7 +358,7 @@ public class FoxData {
 		builder.append("Red Score,Blue Score,");
 		
 		for(int i=0; i<towerCubes.length; i++) {
-			builder.append(String.format("Tower Cube [%d],", i));
+			builder.append(String.format("Tower %d Cube,", i));
 		}
 		
 		builder.append("Auton,");

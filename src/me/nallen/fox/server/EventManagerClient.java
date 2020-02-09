@@ -68,8 +68,8 @@ public class EventManagerClient implements me.nallen.fox.server.eventmanager.Dat
 		new Thread(new Runnable(){
 			@Override
 			public void run(){
-				System.out.println("Sending");
 				if(uploadUrl != null) {
+					System.out.println("Sending");
 					try {
 						byte[] data = Files.readAllBytes(Paths.get("scores.csv"));
 						
