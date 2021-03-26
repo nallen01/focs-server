@@ -71,8 +71,8 @@ public class FoxData {
 	
 	public enum BallType {
 	    NONE(0),
-	    BLUE(1),
-	    RED(2);
+	    RED(1),
+	    BLUE(2);
 		
 		private final int id;
 		BallType(int id) { this.id = id; }
@@ -426,10 +426,10 @@ public class FoxData {
 		goalOwnership[0][1] = BallType.BLUE;
 		goalOwnership[0][2] = BallType.BLUE;
 		goalOwnership[1][0] = BallType.RED;
-		goalOwnership[1][2] = BallType.NONE;
+		goalOwnership[1][1] = BallType.NONE;
 		goalOwnership[1][2] = BallType.BLUE;
 		goalOwnership[2][0] = BallType.RED;
-		goalOwnership[2][2] = BallType.RED;
+		goalOwnership[2][1] = BallType.RED;
 		goalOwnership[2][2] = BallType.BLUE;
 		
 		autonWinner = AutonWinner.NONE;
