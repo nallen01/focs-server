@@ -82,7 +82,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double FULL_BOX_DIVIDER_HEIGHT = 0.9;
 	private static final double FULL_BOX_OUTER_SPACING = 0.02;
 	
-	private static final int GRAPH_MAX_Y_VALUE_MIN = 40;
+	private static final int GRAPH_MAX_Y_VALUE_MIN = 10;
 	private static final double GRAPH_LINE_WIDTH = 0.006;
 	private static final double GRAPH_VERTICAL_LINE_WIDTH = 0.02;
 	

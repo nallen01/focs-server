@@ -18,19 +18,24 @@ public class FoxData {
 	private static final int AUTON_TIE_POINTS = 3;
 	private static final int AUTON_WIN_POINTS = 6;
 	
-	private CubeType[] towerCubes = {
-			CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE
+	private static final int BALL_POINTS = 1;
+	private static final int ROW_POINTS = 6;
+	
+	private BallType[][] goalOwnership = {
+			{
+				BallType.NONE, BallType.NONE, BallType.NONE
+			},{
+				BallType.NONE, BallType.NONE, BallType.NONE
+			},{
+				BallType.NONE, BallType.NONE, BallType.NONE
+			}
 		};
 	
 	private AutonWinner autonWinner = AutonWinner.NONE;
 	
-	private int redOrangeCubes = 0;
-	private int redGreenCubes = 0;
-	private int redPurpleCubes = 0;
+	private int redBalls = 0;
 	
-	private int blueOrangeCubes = 0;
-	private int blueGreenCubes = 0;
-	private int bluePurpleCubes = 0;
+	private int blueBalls = 0;
 
 	private int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
 	private int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
@@ -64,17 +69,16 @@ public class FoxData {
 		}
 	}
 	
-	public enum CubeType {
+	public enum BallType {
 	    NONE(0),
-	    ORANGE(1),
-	    GREEN(2),
-	    PURPLE(3);
+	    BLUE(1),
+	    RED(2);
 		
 		private final int id;
-		CubeType(int id) { this.id = id; }
+		BallType(int id) { this.id = id; }
 		public int getValue() { return id; }
-		public static CubeType fromInt(int id) {
-			CubeType[] values = CubeType.values();
+		public static BallType fromInt(int id) {
+			BallType[] values = BallType.values();
             for(int i=0; i<values.length; i++) {
                 if(values[i].getValue() == id)
                     return values[i];
@@ -137,11 +141,11 @@ public class FoxData {
 		}
 	}
 	
-	public CubeType getTowerCube(int pos) {
-		return this.towerCubes[pos];
+	public BallType getGoalOwnership(int x, int y) {
+		return this.goalOwnership[x][y];
 	}
-	public void setTowerCube(int pos, CubeType cubeType) {
-		this.towerCubes[pos] = cubeType;
+	public void setGoalOwnership(int x, int y, BallType ballType) {
+		this.goalOwnership[x][y] = ballType;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -153,51 +157,19 @@ public class FoxData {
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedOrangeCubes() {
-		return this.redOrangeCubes;
+	public int getRedBalls() {
+		return this.redBalls;
 	}
-	public void setRedOrangeCubes(int cubes) {
-		this.redOrangeCubes = cubes;
+	public void setRedBalls(int balls) {
+		this.redBalls = balls;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedPurpleCubes() {
-		return this.redPurpleCubes;
+	public int getBlueBalls() {
+		return this.blueBalls;
 	}
-	public void setRedPurpleCubes(int cubes) {
-		this.redPurpleCubes = cubes;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public int getRedGreenCubes() {
-		return this.redGreenCubes;
-	}
-	public void setRedGreenCubes(int cubes) {
-		this.redGreenCubes = cubes;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public int getBlueOrangeCubes() {
-		return this.blueOrangeCubes;
-	}
-	public void setBlueOrangeCubes(int cubes) {
-		this.blueOrangeCubes = cubes;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public int getBluePurpleCubes() {
-		return this.bluePurpleCubes;
-	}
-	public void setBluePurpleCubes(int cubes) {
-		this.bluePurpleCubes = cubes;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public int getBlueGreenCubes() {
-		return this.blueGreenCubes;
-	}
-	public void setBlueGreenCubes(int cubes) {
-		this.blueGreenCubes = cubes;
+	public void setBlueBalls(int balls) {
+		this.blueBalls = balls;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -221,22 +193,81 @@ public class FoxData {
 		fireUpdate(UpdateType.SETTING);
 	}
 	
-	public int getTowerCubeTotal(CubeType cubeType) {
+	public int getRows(BallType ballType) {
 		int count = 0;
-		for(int i=0; i<this.towerCubes.length; i++) {
-			if(this.towerCubes[i] == cubeType)
-				count++;
+		
+		// Check horizontal rows
+		for(int i=0; i<goalOwnership.length; i++) {
+			boolean valid = true;
+			for(int j=0; j<goalOwnership.length; j++) {
+				if(goalOwnership[i][j] != ballType) {
+					valid = false;
+					break;
+				}
+			}
+			
+			if(valid) {
+				count += 1;
+			}
+		}
+		
+		// Check vertical columns
+		for(int i=0; i<goalOwnership.length; i++) {
+			boolean valid = true;
+			for(int j=0; j<goalOwnership.length; j++) {
+				if(goalOwnership[j][i] != ballType) {
+					valid = false;
+					break;
+				}
+			}
+			
+			if(valid) {
+				count += 1;
+			}
+		}
+
+		// Check first diagonal
+		boolean valid = true;
+		for(int i=0; i<goalOwnership.length; i++) {
+			if(goalOwnership[i][i] != ballType) {
+				valid = false;
+				break;
+			}
+		}
+		
+		if(valid) {
+			count += 1;
+		}
+		
+		// Check other diagonal
+		valid = true;
+		for(int i=0; i<goalOwnership.length; i++) {
+			if(goalOwnership[goalOwnership.length-i][i] != ballType) {
+				valid = false;
+				break;
+			}
+		}
+		
+		if(valid) {
+			count += 1;
 		}
 		
 		return count;
 	}
 	
+	public int getRedRows() {
+		return getRows(BallType.RED);
+	}
+	
+	public int getBlueRows() {
+		return getRows(BallType.BLUE);
+	}
+	
 	public int getRedScore() {
 		int score = 0;
 		
-		score += getRedOrangeCubes() * (1 + getTowerCubeTotal(CubeType.ORANGE));
-		score += getRedGreenCubes() * (1 + getTowerCubeTotal(CubeType.GREEN));
-		score += getRedPurpleCubes() * (1 + getTowerCubeTotal(CubeType.PURPLE));
+		score += BALL_POINTS * getRedBalls();
+		score += ROW_POINTS * getRedRows();
 		
 		if(getAutonWinner() == AutonWinner.RED) {
 			score += AUTON_WIN_POINTS;
@@ -251,9 +282,8 @@ public class FoxData {
 	public int getBlueScore() {
 		int score = 0;
 		
-		score += getBlueOrangeCubes() * (1 + getTowerCubeTotal(CubeType.ORANGE));
-		score += getBlueGreenCubes() * (1 + getTowerCubeTotal(CubeType.GREEN));
-		score += getBluePurpleCubes() * (1 + getTowerCubeTotal(CubeType.PURPLE));
+		score += BALL_POINTS * getBlueBalls();
+		score += ROW_POINTS * getBlueRows();
 		
 		if(getAutonWinner() == AutonWinner.BLUE) {
 			score += AUTON_WIN_POINTS;
@@ -357,19 +387,17 @@ public class FoxData {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Red Score,Blue Score,");
 		
-		for(int i=0; i<towerCubes.length; i++) {
-			builder.append(String.format("Tower %d Cube,", i));
+		for(int i=0; i<goalOwnership.length; i++) {
+			for(int j=0; j<goalOwnership[i].length; j++) {
+				builder.append(String.format("Goal %d-%d Ownership,", i, j));
+			}
 		}
 		
 		builder.append("Auton,");
 		
-		builder.append("Red Orange Cubes,");
-		builder.append("Red Green Cubes,");
-		builder.append("Red Purple Cubes,");
+		builder.append("Red Balls,");
 
-		builder.append("Blue Orange Cubes,");
-		builder.append("Blue Green Cubes,");
-		builder.append("Blue Purple Cubes,");
+		builder.append("Blue Balls,");
 		
 		return builder.toString();
 	}
@@ -378,35 +406,37 @@ public class FoxData {
 		StringBuilder builder = new StringBuilder();
 		builder.append(String.format("%d,%d,", getRedScore(), getBlueScore()));
 		
-		for(int i=0; i<towerCubes.length; i++) {
-			builder.append(String.format("%s,", towerCubes[i].name()));
+		for(int i=0; i<goalOwnership.length; i++) {
+			for(int j=0; j<goalOwnership[i].length; j++) {
+				builder.append(String.format("%s,", goalOwnership[i][j].name()));
+			}
 		}
 
 		builder.append(String.format("%s,", autonWinner.name()));
 		
-		builder.append(String.format("%d,", redOrangeCubes));
-		builder.append(String.format("%d,", redGreenCubes));
-		builder.append(String.format("%d,", redPurpleCubes));
+		builder.append(String.format("%d,", redBalls));
 		
-		builder.append(String.format("%d,", blueOrangeCubes));
-		builder.append(String.format("%d,", blueGreenCubes));
-		builder.append(String.format("%d,", bluePurpleCubes));
+		builder.append(String.format("%d,", blueBalls));
 		
 		return builder.toString();
 	}
 	
 	public void clear() {
-		Arrays.fill(towerCubes, CubeType.NONE);
+		goalOwnership[0][0] = BallType.RED;
+		goalOwnership[0][1] = BallType.BLUE;
+		goalOwnership[0][2] = BallType.BLUE;
+		goalOwnership[1][0] = BallType.RED;
+		goalOwnership[1][2] = BallType.NONE;
+		goalOwnership[1][2] = BallType.BLUE;
+		goalOwnership[2][0] = BallType.RED;
+		goalOwnership[2][2] = BallType.RED;
+		goalOwnership[2][2] = BallType.BLUE;
 		
 		autonWinner = AutonWinner.NONE;
 		
-		redOrangeCubes = 0;
-		redGreenCubes = 0;
-		redPurpleCubes = 0;
+		redBalls = 0;
 		
-		blueOrangeCubes = 0;
-		blueGreenCubes = 0;
-		bluePurpleCubes = 0;
+		blueBalls = 0;
 		
 		for(int i=0; i<NUM_HISTORY_POINTS; i++) {
 			redScoreHistory[i] = -1;

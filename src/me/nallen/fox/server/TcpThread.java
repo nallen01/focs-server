@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import me.nallen.fox.server.FoxData.AutonWinner;
-import me.nallen.fox.server.FoxData.CubeType;
+import me.nallen.fox.server.FoxData.BallType;
 import me.nallen.fox.server.FoxData.HistoryMethod;
 
 public class TcpThread extends Thread implements DataListener {
@@ -17,23 +17,21 @@ public class TcpThread extends Thread implements DataListener {
     private BufferedWriter out = null;
     
     public enum ScoreField {
-		TOWER_CUBE_1(0),
-		TOWER_CUBE_2(1),
-		TOWER_CUBE_3(2),
-		TOWER_CUBE_4(3),
-		TOWER_CUBE_5(4),
-		TOWER_CUBE_6(5),
-		TOWER_CUBE_7(6),
+		GOAL_OWNERSHIP_0_0(0),
+		GOAL_OWNERSHIP_0_1(1),
+		GOAL_OWNERSHIP_0_2(2),
+		GOAL_OWNERSHIP_1_0(3),
+		GOAL_OWNERSHIP_1_1(4),
+		GOAL_OWNERSHIP_1_2(5),
+		GOAL_OWNERSHIP_2_0(6),
+		GOAL_OWNERSHIP_2_1(7),
+		GOAL_OWNERSHIP_2_2(8),
 		
-		AUTON(7),
+		AUTON(9),
 		
-		RED_ORANGE_CUBES(8),
-		RED_GREEN_CUBES(9),
-		RED_PURPLE_CUBES(10),
+		RED_BALLS(10),
 		
-		BLUE_ORANGE_CUBES(11),
-		BLUE_GREEN_CUBES(12),
-		BLUE_PURPLE_CUBES(13),
+		BLUE_BALLS(11),
     	
     	PAUSED(22),
     	HISTORY_METHOD(23),
@@ -109,24 +107,22 @@ public class TcpThread extends Thread implements DataListener {
 		    	sendMessage("1");
 		    	
 
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_1, MessageType.SET, FoxServer.foxData.getTowerCube(0).getValue());
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_2, MessageType.SET, FoxServer.foxData.getTowerCube(1).getValue());
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_3, MessageType.SET, FoxServer.foxData.getTowerCube(2).getValue());
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_4, MessageType.SET, FoxServer.foxData.getTowerCube(3).getValue());
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_5, MessageType.SET, FoxServer.foxData.getTowerCube(4).getValue());
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_6, MessageType.SET, FoxServer.foxData.getTowerCube(5).getValue());
-		    	sendFoxCommand(ScoreField.TOWER_CUBE_7, MessageType.SET, FoxServer.foxData.getTowerCube(6).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_0_0, MessageType.SET, FoxServer.foxData.getGoalOwnership(0, 0).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_0_1, MessageType.SET, FoxServer.foxData.getGoalOwnership(0, 1).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_0_2, MessageType.SET, FoxServer.foxData.getGoalOwnership(0, 2).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_1_0, MessageType.SET, FoxServer.foxData.getGoalOwnership(1, 0).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_1_1, MessageType.SET, FoxServer.foxData.getGoalOwnership(1, 1).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_1_2, MessageType.SET, FoxServer.foxData.getGoalOwnership(1, 2).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_2_0, MessageType.SET, FoxServer.foxData.getGoalOwnership(2, 0).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_2_1, MessageType.SET, FoxServer.foxData.getGoalOwnership(2, 1).getValue());
+		    	sendFoxCommand(ScoreField.GOAL_OWNERSHIP_2_2, MessageType.SET, FoxServer.foxData.getGoalOwnership(2, 2).getValue());
 		    	
 		    	
 		    	sendFoxCommand(ScoreField.AUTON, MessageType.SET, FoxServer.foxData.getAutonWinner().getValue());
 		    	
-		    	sendFoxCommand(ScoreField.RED_ORANGE_CUBES, MessageType.SET, FoxServer.foxData.getRedOrangeCubes());
-		    	sendFoxCommand(ScoreField.RED_GREEN_CUBES, MessageType.SET, FoxServer.foxData.getRedGreenCubes());
-		    	sendFoxCommand(ScoreField.RED_PURPLE_CUBES, MessageType.SET, FoxServer.foxData.getRedPurpleCubes());
-
-		    	sendFoxCommand(ScoreField.BLUE_ORANGE_CUBES, MessageType.SET, FoxServer.foxData.getBlueOrangeCubes());
-		    	sendFoxCommand(ScoreField.BLUE_GREEN_CUBES, MessageType.SET, FoxServer.foxData.getBlueGreenCubes());
-		    	sendFoxCommand(ScoreField.BLUE_PURPLE_CUBES, MessageType.SET, FoxServer.foxData.getBluePurpleCubes());
+		    	sendFoxCommand(ScoreField.RED_BALLS, MessageType.SET, FoxServer.foxData.getRedBalls());
+		    	
+		    	sendFoxCommand(ScoreField.BLUE_BALLS, MessageType.SET, FoxServer.foxData.getBlueBalls());
 		    	
 			    FoxServer.foxData.addListener(this);
 		    	
@@ -143,89 +139,53 @@ public class TcpThread extends Thread implements DataListener {
 		    					MessageType type = MessageType.fromInt(Integer.parseInt(parts[1]));
 		    					int num = Integer.parseInt(parts[2]);
 		    					
-		    					if(field == ScoreField.TOWER_CUBE_1
-		    							|| field == ScoreField.TOWER_CUBE_2
-		    							|| field == ScoreField.TOWER_CUBE_3
-		    							|| field == ScoreField.TOWER_CUBE_4
-		    							|| field == ScoreField.TOWER_CUBE_5
-		    							|| field == ScoreField.TOWER_CUBE_6
-		    							|| field == ScoreField.TOWER_CUBE_7) {
-		    						int pos = 0;
+		    					if(field == ScoreField.GOAL_OWNERSHIP_0_0
+		    							|| field == ScoreField.GOAL_OWNERSHIP_0_1
+		    							|| field == ScoreField.GOAL_OWNERSHIP_0_2
+		    							|| field == ScoreField.GOAL_OWNERSHIP_1_0
+		    							|| field == ScoreField.GOAL_OWNERSHIP_1_1
+		    							|| field == ScoreField.GOAL_OWNERSHIP_1_2
+		    							|| field == ScoreField.GOAL_OWNERSHIP_2_0
+		    							|| field == ScoreField.GOAL_OWNERSHIP_2_1
+		    							|| field == ScoreField.GOAL_OWNERSHIP_2_2) {
+		    						int x = 0, y = 0;
 		    						switch(field) {
-			    						case TOWER_CUBE_1: pos = 0; break;
-			    						case TOWER_CUBE_2: pos = 1; break;
-			    						case TOWER_CUBE_3: pos = 2; break;
-			    						case TOWER_CUBE_4: pos = 3; break;
-			    						case TOWER_CUBE_5: pos = 4; break;
-			    						case TOWER_CUBE_6: pos = 5; break;
-			    						case TOWER_CUBE_7: pos = 6; break;
+			    						case GOAL_OWNERSHIP_0_0: x = 0; y = 0; break;
+			    						case GOAL_OWNERSHIP_0_1: x = 0; y = 1; break;
+			    						case GOAL_OWNERSHIP_0_2: x = 0; y = 2; break;
+			    						case GOAL_OWNERSHIP_1_0: x = 1; y = 0; break;
+			    						case GOAL_OWNERSHIP_1_1: x = 1; y = 1; break;
+			    						case GOAL_OWNERSHIP_1_2: x = 1; y = 2; break;
+			    						case GOAL_OWNERSHIP_2_0: x = 2; y = 0; break;
+			    						case GOAL_OWNERSHIP_2_1: x = 2; y = 1; break;
+			    						case GOAL_OWNERSHIP_2_2: x = 2; y = 2; break;
 			    						default: break;
 		    						}
 		    						
-	    							FoxServer.foxData.setTowerCube(pos, CubeType.fromInt(num));
+	    							FoxServer.foxData.setGoalOwnership(x, y, BallType.fromInt(num));
 		    					}
 		    					else if(field == ScoreField.AUTON) {
 		    						FoxServer.foxData.setAutonWinner(AutonWinner.fromInt(num));
 		    					}
-		    					else if(field == ScoreField.RED_ORANGE_CUBES) {
+		    					else if(field == ScoreField.RED_BALLS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedOrangeCubes() + num;
+		    							num = FoxServer.foxData.getRedBalls() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedOrangeCubes() - num;
+		    							num = FoxServer.foxData.getRedBalls() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedOrangeCubes(num);
+	    							FoxServer.foxData.setRedBalls(num);
 		    					}
-		    					else if(field == ScoreField.RED_GREEN_CUBES) {
+		    					else if(field == ScoreField.BLUE_BALLS) {
 		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedGreenCubes() + num;
+		    							num = FoxServer.foxData.getBlueBalls() + num;
 		    						}
 		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedGreenCubes() - num;
+		    							num = FoxServer.foxData.getBlueBalls() - num;
 		    						}
 		    						
-	    							FoxServer.foxData.setRedGreenCubes(num);
-		    					}
-		    					else if(field == ScoreField.RED_PURPLE_CUBES) {
-		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getRedPurpleCubes() + num;
-		    						}
-		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getRedPurpleCubes() - num;
-		    						}
-		    						
-	    							FoxServer.foxData.setRedPurpleCubes(num);
-		    					}
-		    					else if(field == ScoreField.BLUE_ORANGE_CUBES) {
-		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueOrangeCubes() + num;
-		    						}
-		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueOrangeCubes() - num;
-		    						}
-		    						
-	    							FoxServer.foxData.setBlueOrangeCubes(num);
-		    					}
-		    					else if(field == ScoreField.BLUE_GREEN_CUBES) {
-		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBlueGreenCubes() + num;
-		    						}
-		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBlueGreenCubes() - num;
-		    						}
-		    						
-	    							FoxServer.foxData.setBlueGreenCubes(num);
-		    					}
-		    					else if(field == ScoreField.BLUE_PURPLE_CUBES) {
-		    						if(type == MessageType.ADD) {
-		    							num = FoxServer.foxData.getBluePurpleCubes() + num;
-		    						}
-		    						else if(type == MessageType.SUBTRACT) {
-		    							num = FoxServer.foxData.getBluePurpleCubes() - num;
-		    						}
-		    						
-	    							FoxServer.foxData.setBluePurpleCubes(num);
+	    							FoxServer.foxData.setBlueBalls(num);
 		    					}
 		    					else if(field == ScoreField.PAUSED) {
 	    							FoxServer.foxData.setPaused(num > 0);
