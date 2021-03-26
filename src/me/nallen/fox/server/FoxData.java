@@ -15,29 +15,22 @@ public class FoxData {
 	public static final int NUM_HISTORY_POINTS = (int) (HISTORY_SECONDS * HISTORY_FREQUENCY) + 1;
 	public static final int HISTORY_MILLISECONDS = (int) (1000 / HISTORY_FREQUENCY);
 	
-	private static final int AUTON_POINTS = 4;
-	private static final int HIGH_FLAG_POINTS = 2;
-	private static final int LOW_FLAG_POINTS = 1;
-	private static final int HIGH_CAP_POINTS = 2;
-	private static final int LOW_CAP_POINTS = 1;
-	private static final int ALLIANCE_PARKED_POINTS = 3;
-	private static final int CENTRE_PARKED_POINTS = 6;
+	private static final int AUTON_TIE_POINTS = 3;
+	private static final int AUTON_WIN_POINTS = 6;
 	
-	private ToggleState[][] highFlags = {
-			{ToggleState.NONE, ToggleState.NONE, ToggleState.NONE},
-			{ToggleState.NONE, ToggleState.NONE, ToggleState.NONE}
+	private CubeType[] towerCubes = {
+			CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE, CubeType.NONE
 		};
-	private ToggleState[] lowFlags = {ToggleState.NONE, ToggleState.NONE, ToggleState.NONE};
 	
-	private int redHighCaps = 0;
-	private int redLowCaps = 0;
-	private ParkingState[] redParking = {ParkingState.NONE, ParkingState.NONE};
-	private boolean redAuton = false;
+	private AutonWinner autonWinner = AutonWinner.NONE;
 	
-	private int blueHighCaps = 0;
-	private int blueLowCaps = 0;
-	private ParkingState[] blueParking = {ParkingState.NONE, ParkingState.NONE};
-	private boolean blueAuton = false;
+	private int redOrangeCubes = 0;
+	private int redGreenCubes = 0;
+	private int redPurpleCubes = 0;
+	
+	private int blueOrangeCubes = 0;
+	private int blueGreenCubes = 0;
+	private int bluePurpleCubes = 0;
 
 	private int[] redScoreHistory = new int[NUM_HISTORY_POINTS];
 	private int[] blueScoreHistory = new int[NUM_HISTORY_POINTS];
@@ -45,24 +38,24 @@ public class FoxData {
 	
 	private boolean isPaused = false;
 	
-	private boolean showHistory = true;
-	private boolean largeHistory = true;
+	private HistoryMethod historyMethod = HistoryMethod.SIDE;
 	private boolean isHidden = false;
 	
 	private boolean isThreeTeam = false;
 
 	private LinkedList<DataListener> _listeners = new LinkedList<DataListener>();
 	
-	public enum ToggleState {
-	    NONE(0),
-	    RED(1),
-	    BLUE(2);
+	public enum HistoryMethod {
+		NONE(0),
+	    CORNER(1),
+	    SIDE(2),
+	    FULL(3);
 		
 		private final int id;
-		ToggleState(int id) { this.id = id; }
+		HistoryMethod(int id) { this.id = id; }
 		public int getValue() { return id; }
-		public static ToggleState fromInt(int id) {
-			ToggleState[] values = ToggleState.values();
+		public static HistoryMethod fromInt(int id) {
+			HistoryMethod[] values = HistoryMethod.values();
             for(int i=0; i<values.length; i++) {
                 if(values[i].getValue() == id)
                     return values[i];
@@ -71,30 +64,41 @@ public class FoxData {
 		}
 	}
 	
-	public enum ParkingState {
+	public enum CubeType {
 	    NONE(0),
-	    ALLIANCE_PARKED(1),
-	    CENTRE_PARKED(2);
+	    ORANGE(1),
+	    GREEN(2),
+	    PURPLE(3);
 		
 		private final int id;
-		ParkingState(int id) { this.id = id; }
+		CubeType(int id) { this.id = id; }
 		public int getValue() { return id; }
-		public static ParkingState fromInt(int id) {
-			ParkingState[] values = ParkingState.values();
+		public static CubeType fromInt(int id) {
+			CubeType[] values = CubeType.values();
             for(int i=0; i<values.length; i++) {
                 if(values[i].getValue() == id)
                     return values[i];
             }
             return null;
 		}
+	}
+	
+	public enum AutonWinner {
+	    NONE(0),
+	    RED(1),
+	    BLUE(2),
+	    TIE(3);
 		
-		public int getScore() {
-			switch(this) {
-			case NONE: return 0;
-			case ALLIANCE_PARKED: return ALLIANCE_PARKED_POINTS;
-			case CENTRE_PARKED: return CENTRE_PARKED_POINTS;
-			default: return 0;
-			}
+		private final int id;
+		AutonWinner(int id) { this.id = id; }
+		public int getValue() { return id; }
+		public static AutonWinner fromInt(int id) {
+			AutonWinner[] values = AutonWinner.values();
+            for(int i=0; i<values.length; i++) {
+                if(values[i].getValue() == id)
+                    return values[i];
+            }
+            return null;
 		}
 	}
 	
@@ -108,12 +112,8 @@ public class FoxData {
 		}, 0, HISTORY_MILLISECONDS, TimeUnit.MILLISECONDS);
 	}
 	
-	public boolean getLargeHistory() {
-		return largeHistory;
-	}
-	
-	public boolean getShowHistory() {
-		return showHistory;
+	public HistoryMethod getHistoryMethod() {
+		return historyMethod;
 	}
 	
 	public boolean getHidden() {
@@ -137,91 +137,67 @@ public class FoxData {
 		}
 	}
 	
-	public ToggleState getHighFlag(int row, int column) {
-		return this.highFlags[row][column];
+	public CubeType getTowerCube(int pos) {
+		return this.towerCubes[pos];
 	}
-	public void setHighFlag(int row, int column, ToggleState toggleState) {
-		this.highFlags[row][column] = toggleState;
+	public void setTowerCube(int pos, CubeType cubeType) {
+		this.towerCubes[pos] = cubeType;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public ToggleState getLowFlag(int column) {
-		return this.lowFlags[column];
+	public AutonWinner getAutonWinner() {
+		return this.autonWinner;
 	}
-	public void setLowFlag(int column, ToggleState toggleState) {
-		this.lowFlags[column] = toggleState;
+	public void setAutonWinner(AutonWinner winner) {
+		this.autonWinner = winner;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedHighCaps() {
-		return this.redHighCaps;
+	public int getRedOrangeCubes() {
+		return this.redOrangeCubes;
 	}
-	public void setRedHighCaps(int caps) {
-		this.redHighCaps = caps;
+	public void setRedOrangeCubes(int cubes) {
+		this.redOrangeCubes = cubes;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getRedLowCaps() {
-		return this.redLowCaps;
+	public int getRedPurpleCubes() {
+		return this.redPurpleCubes;
 	}
-	public void setRedLowCaps(int caps) {
-		this.redLowCaps = caps;
+	public void setRedPurpleCubes(int cubes) {
+		this.redPurpleCubes = cubes;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public ParkingState getRedParking(int index) {
-		return this.redParking[index];
+	public int getRedGreenCubes() {
+		return this.redGreenCubes;
 	}
-	public void setRedParking(int index, ParkingState state) {
-		this.redParking[index] = state;
+	public void setRedGreenCubes(int cubes) {
+		this.redGreenCubes = cubes;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public boolean getRedAuton() {
-		return this.redAuton;
+	public int getBlueOrangeCubes() {
+		return this.blueOrangeCubes;
 	}
-	public void setRedAuton(boolean auton) {
-		this.redAuton = auton;
-		
-		if(this.redAuton)
-			this.blueAuton = false;
-
+	public void setBlueOrangeCubes(int cubes) {
+		this.blueOrangeCubes = cubes;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueHighCaps() {
-		return this.blueHighCaps;
+	public int getBluePurpleCubes() {
+		return this.bluePurpleCubes;
 	}
-	public void setBlueHighCaps(int caps) {
-		this.blueHighCaps = caps;
+	public void setBluePurpleCubes(int cubes) {
+		this.bluePurpleCubes = cubes;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
-	public int getBlueLowCaps() {
-		return this.blueLowCaps;
+	public int getBlueGreenCubes() {
+		return this.blueGreenCubes;
 	}
-	public void setBlueLowCaps(int caps) {
-		this.blueLowCaps = caps;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public ParkingState getBlueParking(int index) {
-		return this.blueParking[index];
-	}
-	public void setBlueParking(int index, ParkingState state) {
-		this.blueParking[index] = state;
-		fireUpdate(UpdateType.SCORE);
-	}
-	
-	public boolean getBlueAuton() {
-		return this.blueAuton;
-	}
-	public void setBlueAuton(boolean auton) {
-		this.blueAuton = auton;
-		
-		if(this.blueAuton)
-			this.redAuton = false;
-		
+	public void setBlueGreenCubes(int cubes) {
+		this.blueGreenCubes = cubes;
 		fireUpdate(UpdateType.SCORE);
 	}
 	
@@ -230,13 +206,8 @@ public class FoxData {
 		fireUpdate(UpdateType.SETTING);
 	}
 	
-	public void setShowHistory(boolean show) {
-		this.showHistory = show;
-		fireUpdate(UpdateType.SETTING);
-	}
-	
-	public void setLargeHistory(boolean large) {
-		this.largeHistory = large;
+	public void setHistoryMethod(HistoryMethod method) {
+		this.historyMethod = method;
 		fireUpdate(UpdateType.SETTING);
 	}
 	
@@ -249,65 +220,81 @@ public class FoxData {
 		this.isThreeTeam = threeTeam;
 		fireUpdate(UpdateType.SETTING);
 	}
+	
+	public int getTowerCubeTotal(CubeType cubeType) {
+		int count = 0;
+		for(int i=0; i<this.towerCubes.length; i++) {
+			if(this.towerCubes[i] == cubeType)
+				count++;
+		}
+		
+		return count;
+	}
+	
 	public int getRedScore() {
 		int score = 0;
 		
-		// High Flags
-		for(int i=0; i<2; i++) {
-			for(int j=0; j<3; j++) {
-				if(highFlags[i][j] == ToggleState.RED)
-					score += HIGH_FLAG_POINTS;
-			}
+		score += getRedOrangeCubes() * (1 + getTowerCubeTotal(CubeType.ORANGE));
+		score += getRedGreenCubes() * (1 + getTowerCubeTotal(CubeType.GREEN));
+		score += getRedPurpleCubes() * (1 + getTowerCubeTotal(CubeType.PURPLE));
+		
+		if(getAutonWinner() == AutonWinner.RED) {
+			score += AUTON_WIN_POINTS;
+		}
+		else if(getAutonWinner() == AutonWinner.TIE) {
+			score += AUTON_TIE_POINTS;
 		}
 		
-		// Low Flags
-		for(int i=0; i<3; i++) {
-			if(lowFlags[i] == ToggleState.RED)
-				score += LOW_FLAG_POINTS;
-		}
-		
-		// Caps
-		score += redHighCaps * HIGH_CAP_POINTS;
-		score += redLowCaps * LOW_CAP_POINTS;
-		
-		// Parking
-		for(int i=0; i<2; i++) {
-			score += redParking[i].getScore();
-		}
-		
-		// Auton
-		score += redAuton ? AUTON_POINTS : 0;
 		return score;
 	}
 	
 	public int getBlueScore() {
 		int score = 0;
-		// High Flags
-		for(int i=0; i<2; i++) {
-			for(int j=0; j<3; j++) {
-				if(highFlags[i][j] == ToggleState.BLUE)
-					score += HIGH_FLAG_POINTS;
-			}
+		
+		score += getBlueOrangeCubes() * (1 + getTowerCubeTotal(CubeType.ORANGE));
+		score += getBlueGreenCubes() * (1 + getTowerCubeTotal(CubeType.GREEN));
+		score += getBluePurpleCubes() * (1 + getTowerCubeTotal(CubeType.PURPLE));
+		
+		if(getAutonWinner() == AutonWinner.BLUE) {
+			score += AUTON_WIN_POINTS;
+		}
+		else if(getAutonWinner() == AutonWinner.TIE) {
+			score += AUTON_TIE_POINTS;
 		}
 		
-		// Low Flags
-		for(int i=0; i<3; i++) {
-			if(lowFlags[i] == ToggleState.BLUE)
-				score += LOW_FLAG_POINTS;
-		}
-		
-		// Caps
-		score += blueHighCaps * HIGH_CAP_POINTS;
-		score += blueLowCaps * LOW_CAP_POINTS;
-		
-		// Parking
-		for(int i=0; i<2; i++) {
-			score += blueParking[i].getScore();
-		}
-		
-		// Auton
-		score += blueAuton ? AUTON_POINTS : 0;
 		return score;
+	}
+	
+	public int getMaxRedScore() {
+		int max = 0;
+		
+		for(int i=0; i<redScoreHistory.length; i++) {
+			if(redScoreHistory[i] > max)
+				max = redScoreHistory[i];
+		}
+		
+		return max;
+	}
+	
+	public int getMaxBlueScore() {
+		int max = 0;
+		
+		for(int i=0; i<blueScoreHistory.length; i++) {
+			if(blueScoreHistory[i] > max)
+				max = blueScoreHistory[i];
+		}
+		
+		return max;
+	}
+	
+	public int getMaxScore() {
+		int red = getMaxRedScore();
+		int blue = getMaxBlueScore();
+		
+		if(red > blue)
+			return red;
+		
+		return blue;
 	}
 	
 	public int[] getRedScoreHistory() {
@@ -370,28 +357,19 @@ public class FoxData {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Red Score,Blue Score,");
 		
-		for(int i=0; i<highFlags.length; i++) {
-			for(int j=0; j<highFlags[i].length; j++) {
-				builder.append(String.format("Flag [%d, %d],", i, j));
-			}
-		}
-		for(int j=0; j<lowFlags.length; j++) {
-			builder.append(String.format("Flag [%d, %d],", highFlags.length, j));
+		for(int i=0; i<towerCubes.length; i++) {
+			builder.append(String.format("Tower %d Cube,", i));
 		}
 		
-		builder.append("Red High Caps,");
-		builder.append("Red Low Caps,");
-		for(int i=0; i<redParking.length; i++) {
-			builder.append(String.format("Red Parking %d,", i));
-		}
-		builder.append("Red Auton,");
+		builder.append("Auton,");
+		
+		builder.append("Red Orange Cubes,");
+		builder.append("Red Green Cubes,");
+		builder.append("Red Purple Cubes,");
 
-		builder.append("Blue High Caps,");
-		builder.append("Blue Low Caps,");
-		for(int i=0; i<blueParking.length; i++) {
-			builder.append(String.format("Blue Parking %d,", i));
-		}
-		builder.append("Blue Auton,");
+		builder.append("Blue Orange Cubes,");
+		builder.append("Blue Green Cubes,");
+		builder.append("Blue Purple Cubes,");
 		
 		return builder.toString();
 	}
@@ -400,55 +378,35 @@ public class FoxData {
 		StringBuilder builder = new StringBuilder();
 		builder.append(String.format("%d,%d,", getRedScore(), getBlueScore()));
 		
-		for(int i=0; i<highFlags.length; i++) {
-			for(int j=0; j<highFlags[i].length; j++) {
-				builder.append(String.format("%s,", highFlags[i][j].name()));
-			}
+		for(int i=0; i<towerCubes.length; i++) {
+			builder.append(String.format("%s,", towerCubes[i].name()));
 		}
-		for(int j=0; j<lowFlags.length; j++) {
-			builder.append(String.format("%s,", lowFlags[j].name()));
-		}
+
+		builder.append(String.format("%s,", autonWinner.name()));
 		
+		builder.append(String.format("%d,", redOrangeCubes));
+		builder.append(String.format("%d,", redGreenCubes));
+		builder.append(String.format("%d,", redPurpleCubes));
 		
-		builder.append(String.format("%d,", redHighCaps));
-		builder.append(String.format("%d,", redLowCaps));
-		for(int i=0; i<redParking.length; i++) {
-			builder.append(String.format("%d,", redParking[i].getScore()));
-		}
-		builder.append(String.format("%d,", redAuton ? 1 : 0));
-		
-		builder.append(String.format("%d,", blueHighCaps));
-		builder.append(String.format("%d,", blueLowCaps));
-		for(int i=0; i<blueParking.length; i++) {
-			builder.append(String.format("%d,", blueParking[i].getScore()));
-		}
-		builder.append(String.format("%d,", blueAuton ? 1 : 0));
+		builder.append(String.format("%d,", blueOrangeCubes));
+		builder.append(String.format("%d,", blueGreenCubes));
+		builder.append(String.format("%d,", bluePurpleCubes));
 		
 		return builder.toString();
 	}
 	
 	public void clear() {
-		for(int i=0; i<highFlags.length; i++)
-			Arrays.fill(highFlags[i], ToggleState.NONE);
-		Arrays.fill(lowFlags, ToggleState.NONE);
+		Arrays.fill(towerCubes, CubeType.NONE);
 		
-		highFlags[0][0] = ToggleState.BLUE;
-		highFlags[0][2] = ToggleState.RED;
-		highFlags[1][0] = ToggleState.BLUE;
-		highFlags[1][2] = ToggleState.RED;
-		lowFlags[0] = ToggleState.BLUE;
-		lowFlags[2] = ToggleState.RED;
+		autonWinner = AutonWinner.NONE;
 		
-		redHighCaps = 0;
-		redLowCaps = 2;
-		Arrays.fill(redParking, ParkingState.NONE);
-		redAuton = false;
+		redOrangeCubes = 0;
+		redGreenCubes = 0;
+		redPurpleCubes = 0;
 		
-
-		blueHighCaps = 0;
-		blueLowCaps = 2;
-		Arrays.fill(blueParking, ParkingState.NONE);
-		blueAuton = false;
+		blueOrangeCubes = 0;
+		blueGreenCubes = 0;
+		bluePurpleCubes = 0;
 		
 		for(int i=0; i<NUM_HISTORY_POINTS; i++) {
 			redScoreHistory[i] = -1;

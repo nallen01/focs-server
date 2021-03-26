@@ -1,5 +1,6 @@
 package me.nallen.fox.server;
 
+import java.awt.Color;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,6 +32,7 @@ public class FoxServer {
 		String user = null;
 		String password = null;
 		String uploadUrl = null;
+		Color chromaColor = null;
 		
 		try {
 			File file = new File("automation.cfg");
@@ -49,6 +51,26 @@ public class FoxServer {
 
 					else if(line.startsWith("uploadUrl:"))
 						uploadUrl = line.substring(10).trim();
+
+					else if(line.startsWith("chroma:")) {
+						String[] parts = line.substring(7).trim().split(",");
+						if(parts.length == 3) {
+							try {
+								int red, green, blue = 0;
+								red = Integer.parseInt(parts[0].trim());
+								green = Integer.parseInt(parts[1].trim());
+								blue = Integer.parseInt(parts[2].trim());
+								
+								chromaColor = new Color(red, green, blue);
+							}
+							catch(NumberFormatException e) {
+								e.printStackTrace();
+							}
+							catch(IllegalArgumentException e) {
+								e.printStackTrace();
+							}
+						}
+					}
 				}
 			}
 		}
@@ -65,6 +87,6 @@ public class FoxServer {
 		}
 		
 		// Start the GUI
-		gui = new FoxGui();
+		gui = new FoxGui(chromaColor);
 	}
 }
