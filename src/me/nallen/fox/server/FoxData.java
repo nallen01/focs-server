@@ -242,7 +242,7 @@ public class FoxData {
 		// Check other diagonal
 		valid = true;
 		for(int i=0; i<goalOwnership.length; i++) {
-			if(goalOwnership[goalOwnership.length-i][i] != ballType) {
+			if(goalOwnership[goalOwnership.length-i-1][i] != ballType) {
 				valid = false;
 				break;
 			}
@@ -434,9 +434,9 @@ public class FoxData {
 		
 		autonWinner = AutonWinner.NONE;
 		
-		redBalls = 0;
+		redBalls = 9;
 		
-		blueBalls = 0;
+		blueBalls = 9;
 		
 		for(int i=0; i<NUM_HISTORY_POINTS; i++) {
 			redScoreHistory[i] = -1;
