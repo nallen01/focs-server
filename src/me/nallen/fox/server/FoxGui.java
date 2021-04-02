@@ -35,9 +35,9 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final Color grayColor = new Color(105, 105, 105); 
 	
 	private static final double SCORE_BOX_WIDTH = 186.0 / 1920;
-	private static final double SCORE_BOX_HEIGHT = 105.0 / 1080;
-	private static final double RED_SCORE_BOX_X = 226.0 / 1920;
-	private static final double BLUE_SCORE_BOX_X = 1508.0 / 1920;
+	private static final double SCORE_BOX_HEIGHT = 116.0 / 1080;
+	private static final double RED_SCORE_BOX_X = 261.0 / 1920;
+	private static final double BLUE_SCORE_BOX_X = 1 - RED_SCORE_BOX_X - SCORE_BOX_WIDTH;
 	private static final double SCORE_BOX_BOTTOM_OFFSET = 0.0 / 1080;
 	private static final double SCORE_BOX_X_CURVE = 0.15;
 	private static final double SCORE_BOX_Y_CURVE = 0.2;
@@ -49,20 +49,20 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double SCORE_BAR_WIDTH = 1096.0 / 1920;
 	private static final double SCORE_BAR_HEIGHT = 20.0 / 1080;
 	
-	private static final double TOP_BOX_WIDTH = 226.0 / 1920;
-	private static final double TOP_BOX_HEIGHT = 138.0 / 1080;
-	private static final double TOP_BOX_TOP_OFFSET = 37.0 / 1080;
+	private static final double TOP_BOX_WIDTH = 224.0 / 1920;
+	private static final double TOP_BOX_HEIGHT = 154.0 / 1080;
+	private static final double TOP_BOX_TOP_OFFSET = 0.0 / 1080;
 	private static final double TOP_BOX_SIDE_OFFSET = 0.0 / 1920;
 	private static final double TOP_BOX_X_CURVE = 0.10;
 	private static final double TOP_BOX_Y_CURVE = 0.20;
 	private static final double TOP_BOX_OUTER_SPACING = 0.05;
 	
 	private static final GraphMethod MAIN_BOX_METHOD = GraphMethod.ABSOLUTE;
-	private static final double MAIN_BOX_WIDTH = 186.0 / 1920;
-	private static final double MAIN_BOX_HEIGHT = 714.0 / 1080;
-	private static final double MAIN_BOX_HEIGHT_SHORT = 674.0 / 1080;
-	private static final double MAIN_BOX_X = 30.0 / 1920;
-	private static final double MAIN_BOX_Y = 182.0 / 1080;
+	private static final double MAIN_BOX_WIDTH = 209.0 / 1920;
+	private static final double MAIN_BOX_HEIGHT = 780.0 / 1080;
+	private static final double MAIN_BOX_HEIGHT_SHORT = 740.0 / 1080;
+	private static final double MAIN_BOX_X = 15.0 / 1920;
+	private static final double MAIN_BOX_Y = 169.0 / 1080;
 	private static final double MAIN_BOX_X_CURVE = 0.15;
 	private static final double MAIN_BOX_Y_CURVE = 0.03;
 	private static final int[] MAIN_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
@@ -70,11 +70,11 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_DIVIDER_WIDTH = 0.9;
 	private static final double MAIN_BOX_OUTER_SPACING = 0.05;
 
-	private static final double FULL_BOX_WIDTH = 1860.0 / 1920;
-	private static final double FULL_BOX_HEIGHT = 714.0 / 1080;
-	private static final double FULL_BOX_HEIGHT_SHORT = 674.0 / 1080;
-	private static final double FULL_BOX_X = 30.0 / 1920;
-	private static final double FULL_BOX_Y = 182.0 / 1080;
+	private static final double FULL_BOX_WIDTH = 1890.0 / 1920;
+	private static final double FULL_BOX_HEIGHT = 780.0 / 1080;
+	private static final double FULL_BOX_HEIGHT_SHORT = 740.0 / 1080;
+	private static final double FULL_BOX_X = 15.0 / 1920;
+	private static final double FULL_BOX_Y = 169.0 / 1080;
 	private static final double FULL_BOX_X_CURVE = 0.015;
 	private static final double FULL_BOX_Y_CURVE = 0.03;
 	private static final int[] FULL_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
@@ -82,7 +82,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double FULL_BOX_DIVIDER_HEIGHT = 0.9;
 	private static final double FULL_BOX_OUTER_SPACING = 0.02;
 	
-	private static final int GRAPH_MAX_Y_VALUE_MIN = 10;
+	private static final int GRAPH_MAX_Y_VALUE_MIN = 20;
 	private static final double GRAPH_LINE_WIDTH = 0.006;
 	private static final double GRAPH_VERTICAL_LINE_WIDTH = 0.02;
 	
@@ -217,6 +217,7 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	            else if(FoxServer.foxData.getHistoryMethod() == HistoryMethod.CORNER) {
 	            	graphics.fill(new RoundRectangle2D.Double(0, 0, width, height, TOP_BOX_X_CURVE * width, TOP_BOX_Y_CURVE * height));
 	            	graphics.fill(new Rectangle2D.Double(0, 0, width - TOP_BOX_X_CURVE * width, height));
+	            	graphics.fill(new Rectangle2D.Double(0, 0, width, height - TOP_BOX_Y_CURVE * height));
 	            }
 	        }
 	    };
