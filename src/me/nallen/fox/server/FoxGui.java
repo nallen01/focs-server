@@ -59,10 +59,10 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	
 	private static final GraphMethod MAIN_BOX_METHOD = GraphMethod.ABSOLUTE;
 	private static final double MAIN_BOX_WIDTH = 209.0 / 1920;
-	private static final double MAIN_BOX_HEIGHT = 780.0 / 1080;
-	private static final double MAIN_BOX_HEIGHT_SHORT = 740.0 / 1080;
+	private static final double MAIN_BOX_HEIGHT = 722.0 / 1080;
+	private static final double MAIN_BOX_HEIGHT_SHORT = 682.0 / 1080;
 	private static final double MAIN_BOX_X = 15.0 / 1920;
-	private static final double MAIN_BOX_Y = 169.0 / 1080;
+	private static final double MAIN_BOX_Y = 163.0 / 1080;
 	private static final double MAIN_BOX_X_CURVE = 0.15;
 	private static final double MAIN_BOX_Y_CURVE = 0.03;
 	private static final int[] MAIN_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
@@ -71,10 +71,10 @@ public class FoxGui extends JFrame implements KeyListener, DataListener {
 	private static final double MAIN_BOX_OUTER_SPACING = 0.05;
 
 	private static final double FULL_BOX_WIDTH = 1890.0 / 1920;
-	private static final double FULL_BOX_HEIGHT = 780.0 / 1080;
-	private static final double FULL_BOX_HEIGHT_SHORT = 740.0 / 1080;
+	private static final double FULL_BOX_HEIGHT = 722.0 / 1080;
+	private static final double FULL_BOX_HEIGHT_SHORT = 682.0 / 1080;
 	private static final double FULL_BOX_X = 15.0 / 1920;
-	private static final double FULL_BOX_Y = 169.0 / 1080;
+	private static final double FULL_BOX_Y = 163.0 / 1080;
 	private static final double FULL_BOX_X_CURVE = 0.015;
 	private static final double FULL_BOX_Y_CURVE = 0.03;
 	private static final int[] FULL_BOX_DIVIDERS_SECONDS = new int[] { 15, 30, 60, 90 };
